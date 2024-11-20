@@ -1,0 +1,206 @@
+@startuml
+package "UI Layer" {
+    class MainWindow {
+        - menuBar: MenuBar
+        - toolbar: Toolbar
+        - canvas: Canvas
+        - propertiesPanel: PropertiesPanel
+        + display(): void
+        + refresh(): void
+        + close(): void
+    }
+
+    class MenuBar {
+        - fileMenu: Menu
+        - editMenu: Menu
+        - viewMenu: Menu
+        - helpMenu: Menu
+        + addMenu(menu: Menu): void
+        + removeMenu(menu: Menu): void
+        + onClick(menuItem: MenuItem): void
+    }
+
+    class Menu {
+        - name: String
+        - menuItems: List<MenuItem>
+        + addMenuItem(menuItem: MenuItem): void
+        + removeMenuItem(menuItem: MenuItem): void
+        + getMenuItems(): List<MenuItem>
+    }
+
+    class MenuItem {
+        - label: String
+        - shortcut: String
+        + triggerAction(): void
+    }
+
+    class Toolbar {
+        - actions: List<ToolbarAction>
+        + addAction(action: ToolbarAction): void
+        + removeAction(action: ToolbarAction): void
+        + getActions(): List<ToolbarAction>
+    }
+
+    class ToolbarAction {
+        - name: String
+        - icon: Image
+        + execute(): void
+    }
+
+    class Canvas {
+        - currentDiagram: Diagram
+        - zoomLevel: float
+        + renderDiagram(diagram: Diagram): void
+        + handleUserEvent(event: String): void
+        + zoomIn(): void
+        + zoomOut(): void
+        + clear(): void
+    }
+
+    class PropertiesPanel {
+        - selectedComponent: Component
+        - properties: Map<String, String>
+        + updateProperties(component: Component): void
+        + saveProperties(): void
+        + resetProperties(): void
+    }
+
+    MainWindow --> MenuBar
+    MainWindow --> Toolbar
+    MainWindow --> Canvas
+    MainWindow --> PropertiesPanel
+
+    MenuBar --> Menu
+    Menu --> MenuItem
+    Toolbar --> ToolbarAction
+    Canvas --> Diagram
+    PropertiesPanel --> Component
+}
+
+
+package "Business Logic Layer" {
+    class Project {
+        - diagrams: List<Diagram>
+        + addDiagram(diagram: Diagram): void
+        + removeDiagram(diagram: Diagram): void
+        + getDiagrams(): List<Diagram>
+    }
+
+    abstract class Diagram {
+        - components: List<Component>
+        + addComponent(component: Component): void
+        + removeComponent(component: Component): void
+        + getComponents(): List<Component>
+        + renderDiagram(): void
+    }
+
+    class ClassDiagram extends Diagram {
+        - classes: List<Class>
+        - packages: List<Package>
+        + addClass(cls: Class): void
+        + removeClass(cls: Class): void
+        + addPackage(pkg: Package): void
+        + removePackage(pkg: Package): void
+        + renderClassDiagram(): void
+    }
+
+    class UseCaseDiagram extends Diagram {
+        - actors: List<Actor>
+        - useCases: List<UseCase>
+        + addActor(actor: Actor): void
+        + removeActor(actor: Actor): void
+        + addUseCase(useCase: UseCase): void
+        + removeUseCase(useCase: UseCase): void
+        + renderUseCaseDiagram(): void
+    }
+
+    interface Component {
+        + getName(): String
+        + setName(name: String): void
+        + getProperties(): Object
+        + setProperties(properties: Object): void
+    }
+
+    class Class implements Component {
+        - name: String
+        - attributes: List<String>
+        - methods: List<String>
+        + addAttribute(attribute: String): void
+        + removeAttribute(attribute: String): void
+        + addMethod(method: String): void
+        + removeMethod(method: String): void
+        + getAttributes(): List<String>
+        + getMethods(): List<String>
+    }
+
+    class Package implements Component {
+        - name: String
+        - classes: List<Class>
+        + addClass(cls: Class): void
+        + removeClass(cls: Class): void
+        + getClasses(): List<Class>
+    }
+
+    class UseCase implements Component {
+        - name: String
+        - actors: List<Actor>
+        + addActor(actor: Actor): void
+        + removeActor(actor: Actor): void
+        + getActors(): List<Actor>
+    }
+
+    class Actor implements Component {
+        - name: String
+        + setName(name: String): void
+        + getName(): String
+    }
+
+    class CodeGenerator {
+        + generateClassCode(cls: Class): String
+        + generatePackageCode(pkg: Package): String
+        + generateUseCaseCode(useCase: UseCase): String
+    }
+
+    Project --> Diagram
+    Diagram --> Component
+    ClassDiagram --> Class
+    ClassDiagram --> Package
+    UseCaseDiagram --> Actor
+    UseCaseDiagram --> UseCase
+    CodeGenerator --> Diagram
+}
+
+
+package "Data Layer" {
+    class ProjectFileManager {
+        + saveProject(project: Project): void
+        + loadProject(fileName: String): Project
+    }
+
+    class DiagramFileManager {
+        + saveDiagram(diagram: Diagram): void
+        + loadDiagram(fileName: String): Diagram
+    }
+
+    class SerializationUtils {
+        + serializeObject(obj: Object): String
+        + deserializeObject(serializedData: String): Object
+        + writeToFile(serializedData: String, filePath: String): void
+        + readFromFile(filePath: String): String
+    }
+
+    class FileManagerHelper {
+        + validateFilePath(filePath: String): boolean
+        + getFileExtension(filePath: String): String
+        + createBackup(filePath: String): void
+    }
+
+    ProjectFileManager --> DiagramFileManager
+    ProjectFileManager --> SerializationUtils
+    DiagramFileManager --> SerializationUtils
+    ProjectFileManager --> FileManagerHelper
+    DiagramFileManager --> FileManagerHelper
+}
+
+
+@enduml
