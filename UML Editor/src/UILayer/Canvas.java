@@ -20,15 +20,14 @@ public class Canvas extends JPanel {
         setBackground(Color.WHITE);
         setPreferredSize(new Dimension(800, 600));  // Increased default size
 
-        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // Title Panel
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         titlePanel.setBackground(new Color(240, 240, 240));
-        JLabel titleLabel = new JLabel("Diagram Canvas");
+        JLabel titleLabel = new JLabel("Diagram Workspace");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
         titlePanel.add(titleLabel);
         titlePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
-
-
-        add(titlePanel, BorderLayout.NORTH);
+        add(titleLabel, BorderLayout.NORTH);
 
         // Add mouse listener for interaction
         addMouseListener(new MouseAdapter() {

@@ -3,96 +3,57 @@
 package "UI Layer" {
     class MainWindow {
         - menuBar: MenuBar
-        - toolbar: Toolbar
         - canvas: Canvas
         - propertiesPanel: PropertiesPanel
         - componentPalette: ComponentPalette
+        - workSpacePanel: JPanel
         + display(): void
         + refresh(): void
         + close(): void
     }
 
     class MenuBar {
-        - fileMenu: Menu
-        - editMenu: Menu
-        - viewMenu: Menu
-        - helpMenu: Menu
-        + addMenu(menu: Menu): void
-        + removeMenu(menu: Menu): void
-        + onClick(menuItem: MenuItem): void
+        - fileMenu: JMenu
+        - editMenu: JMenu
+        - viewMenu: JMenu
+        - helpMenu: JMenu
     }
 
-    class Menu {
-        - name: String
-        - menuItems: List<MenuItem>
-        + addMenuItem(menuItem: MenuItem): void
-        + removeMenuItem(menuItem: MenuItem): void
-        + getMenuItems(): List<MenuItem>
-    }
-
-    class MenuItem {
-        - label: String
-        - shortcut: String
-        + triggerAction(): void
-    }
-
-    class Toolbar {
-        - actions: List<String>  // Fixed list of action names
-        + executeAction(actionName: String): void
-    }
 
     class Canvas {
-        - currentDiagram: Diagram
         - zoomLevel: float
-        + renderDiagram(diagram: Diagram): void
-        + handleUserEvent(event: String): void
+        - drawGrid(): void
         + zoomIn(): void
         + zoomOut(): void
         + clear(): void
     }
 
     class PropertiesPanel {
-        - selectedComponent: Component
-        - properties: Map<String, String>
-        + updateProperties(component: Component): void
-        + saveProperties(): void
-        + resetProperties(): void
+        
     }
 
     class ComponentPalette {
-        - availableComponents: List<ComponentType>
-        - currentDiagramType: String
-        + setDiagramType(diagramType: String): void
-        + getAvailableComponents(): List<ComponentType>
-        + addComponentToDiagram(componentType: ComponentType): void
-    }
-
-    class ComponentType {
-        - name: String
-        - icon: Image
-        + createComponent(): Component
+     
     }
 
     interface IBusinessLogic {
-        + getDiagram(diagramId: String): Diagram
-        + saveDiagram(diagram: Diagram): void
-        + getAvailableComponents(diagramType: String): List<ComponentType>
-    }
+        + openProject(): void
+        + saveProject(): void
+        + closeProject(): void
+        + createDiagram(String DiagramType): Diagram
+     }
 
     MainWindow --> MenuBar
-    MainWindow --> Toolbar
     MainWindow --> Canvas
     MainWindow --> PropertiesPanel
     MainWindow --> ComponentPalette
     MainWindow --> IBusinessLogic : interacts
 
-    MenuBar --> Menu
-    Menu --> MenuItem
-    Toolbar --> Canvas : updates
     Canvas --> Diagram
     PropertiesPanel --> Component
-    ComponentPalette --> ComponentType
 }
+
+@enduml
 
 package "Business Logic Layer" {
     interface IDataLayer {

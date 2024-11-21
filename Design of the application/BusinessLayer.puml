@@ -1,0 +1,94 @@
+@startuml
+
+package "Business Logic Layer" {
+
+    interface IDataLayer {
+    }
+
+    class BusinessLogic implements IBusinessLogic {
+        + openProject(): void
+        + saveProject(): void
+        + closeProject(): void
+        + createDiagram(DiagramType: String): Diagram
+    }
+
+    abstract class Diagram {
+        - components: List<Component>
+        + addComponent(component: Component): void
+        + removeComponent(component: Component): void
+        + getComponents(): List<Component>
+        + renderDiagram(): void
+    }
+
+    class ClassDiagram extends Diagram {
+        - classes: List<Class>
+        - packages: List<Package>
+        + addClass(cls: Class): void
+        + removeClass(cls: Class): void
+        + addPackage(pkg: Package): void
+        + removePackage(pkg: Package): void
+        + renderClassDiagram(): void
+    }
+
+    class UseCaseDiagram extends Diagram {
+        - actors: List<Actor>
+        - useCases: List<UseCase>
+        + addActor(actor: Actor): void
+        + removeActor(actor: Actor): void
+        + addUseCase(useCase: UseCase): void
+        + removeUseCase(useCase: UseCase): void
+        + renderUseCaseDiagram(): void
+    }
+
+    interface Component {
+        - name: String
+        + getName(): String
+        + setName(name: String): void
+        + getProperties(): Object
+        + setProperties(properties: Object): void
+    }
+
+    class Class implements Component {
+        - name: String
+        - attributes: List<String>
+        - methods: List<String>
+        + addAttribute(attribute: String): void
+        + removeAttribute(attribute: String): void
+        + addMethod(method: String): void
+        + removeMethod(method: String): void
+        + getAttributes(): List<String>
+        + getMethods(): List<String>
+    }
+
+    class Package implements Component {
+        - name: String
+        - classes: List<Class>
+        + addClass(cls: Class): void
+        + removeClass(cls: Class): void
+        + getClasses(): List<Class>
+    }
+
+    class UseCase implements Component {
+        - name: String
+        - actors: List<Actor>
+        + addActor(actor: Actor): void
+        + removeActor(actor: Actor): void
+        + getActors(): List<Actor>
+    }
+
+    class Actor implements Component {
+        - name: String
+        + getName(): String
+        + setName(name: String): void
+    }
+
+    BusinessLogic --> IDataLayer : interacts
+    BusinessLogic --> Diagram
+    Diagram --> Component
+    ClassDiagram --> Class
+    ClassDiagram --> Package
+    UseCaseDiagram --> Actor
+    UseCaseDiagram --> UseCase
+}
+
+@enduml

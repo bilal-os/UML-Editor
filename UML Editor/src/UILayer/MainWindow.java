@@ -8,6 +8,9 @@ public class MainWindow extends JFrame {
     private Canvas canvas;
     private PropertiesPanel propertiesPanel;
     private ComponentPalette componentPalette;
+    private DiagramsPanel diagramsPanel;
+    JPanel workspacePanel;
+    JPanel sidePanel;
 
     public MainWindow() {
         // Set up the main window with more modern look
@@ -24,18 +27,27 @@ public class MainWindow extends JFrame {
         canvas = new Canvas();
         propertiesPanel = new PropertiesPanel();
         componentPalette = new ComponentPalette();
+        diagramsPanel = new DiagramsPanel();
 
         // Set the menu bar
         setJMenuBar(menuBar);
 
         // Create a custom panel for the main workspace with padding
-        JPanel workspacePanel = new JPanel(new BorderLayout(10, 10));
+        workspacePanel = new JPanel(new BorderLayout(10, 10));
         workspacePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
+
+        // Create side panel with vertical layout
+        sidePanel = new JPanel();
+        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
 
         // Set preferred sizes with more flexible dimensions
         canvas.setPreferredSize(new Dimension(700, 600));
         componentPalette.setPreferredSize(new Dimension(250, 600));
-        propertiesPanel.setPreferredSize(new Dimension(350, 600));
+
+        // Add properties and diagrams panels to side panel
+        sidePanel.add(diagramsPanel);
+        sidePanel.add(Box.createVerticalStrut(10)); // Add some vertical spacing
+        sidePanel.add(componentPalette);
 
         // Enhance visual separation with subtle borders
         canvas.setBorder(BorderFactory.createCompoundBorder(
@@ -44,9 +56,9 @@ public class MainWindow extends JFrame {
         ));
 
         // Add components to the workspace panel
-        workspacePanel.add(componentPalette, BorderLayout.WEST);
-        workspacePanel.add(canvas, BorderLayout.CENTER);
         workspacePanel.add(propertiesPanel, BorderLayout.EAST);
+        workspacePanel.add(canvas, BorderLayout.CENTER);
+        workspacePanel.add(sidePanel, BorderLayout.WEST);
 
         // Add workspace to main frame
         add(workspacePanel, BorderLayout.CENTER);
@@ -58,13 +70,11 @@ public class MainWindow extends JFrame {
     }
 
     public void display() {
-        // Pack the frame to respect preferred sizes
         pack();
         setVisible(true);
     }
 
     public void refresh() {
-        // Refresh all components
         SwingUtilities.updateComponentTreeUI(this);
     }
 
@@ -73,7 +83,6 @@ public class MainWindow extends JFrame {
     }
 
     public static void main(String[] args) {
-        // Use system look and feel for a more native appearance
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
