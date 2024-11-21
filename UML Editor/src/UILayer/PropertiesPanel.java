@@ -4,36 +4,43 @@ import javax.swing.*;
 import java.awt.*;
 
 public class PropertiesPanel extends JPanel {
-    private JTextArea propertiesArea;
-    private JButton saveButton;
 
     public PropertiesPanel() {
-        setLayout(new BorderLayout(10, 10));  // Padding for better spacing
-        setPreferredSize(new Dimension(300, 600));  // Consistent size
+        // Set layout to BorderLayout for future use
+        setLayout(new BorderLayout());
 
-        propertiesArea = new JTextArea();
-        propertiesArea.setEditable(false);
-        propertiesArea.setFont(new Font("Arial", Font.PLAIN, 14));
-        JScrollPane scrollPane = new JScrollPane(propertiesArea);
+        // Title Panel
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.setBackground(new Color(240, 240, 240));
+        JLabel titleLabel = new JLabel("Component Properties");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        titlePanel.add(titleLabel);
+        titlePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
+
+        // Content Panel with GridBag Layout for more flexible arrangement
+        JPanel contentPanel = new JPanel(new GridBagLayout());
+        contentPanel.setBackground(Color.WHITE);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+
+        // Wrap content in a scroll pane
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setBorder(null);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        // Add components to main panel
+        add(titlePanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Save button for interaction
-        saveButton = new JButton("Save");
-        saveButton.addActionListener(e -> saveProperties());
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.add(saveButton);
-        add(buttonPanel, BorderLayout.SOUTH);
-    }
-
-    public void updateProperties(String properties) {
-        propertiesArea.setText(properties);
-    }
-
-    public void saveProperties() {
-        System.out.println("Properties saved");
-    }
-
-    public void resetProperties() {
-        propertiesArea.setText("");
+        // Overall panel styling
+        setPreferredSize(new Dimension(250, 600));
+        setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
     }
 }
