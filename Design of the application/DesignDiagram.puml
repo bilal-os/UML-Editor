@@ -1,10 +1,12 @@
 @startuml
+
 package "UI Layer" {
     class MainWindow {
         - menuBar: MenuBar
         - toolbar: Toolbar
         - canvas: Canvas
         - propertiesPanel: PropertiesPanel
+        - componentPalette: ComponentPalette
         + display(): void
         + refresh(): void
         + close(): void
@@ -35,16 +37,8 @@ package "UI Layer" {
     }
 
     class Toolbar {
-        - actions: List<ToolbarAction>
-        + addAction(action: ToolbarAction): void
-        + removeAction(action: ToolbarAction): void
-        + getActions(): List<ToolbarAction>
-    }
-
-    class ToolbarAction {
-        - name: String
-        - icon: Image
-        + execute(): void
+        - actions: List<String>  // Fixed list of action names
+        + executeAction(actionName: String): void
     }
 
     class Canvas {
@@ -65,20 +59,55 @@ package "UI Layer" {
         + resetProperties(): void
     }
 
+    class ComponentPalette {
+        - availableComponents: List<ComponentType>
+        - currentDiagramType: String
+        + setDiagramType(diagramType: String): void
+        + getAvailableComponents(): List<ComponentType>
+        + addComponentToDiagram(componentType: ComponentType): void
+    }
+
+    class ComponentType {
+        - name: String
+        - icon: Image
+        + createComponent(): Component
+    }
+
+    interface IBusinessLogic {
+        + getDiagram(diagramId: String): Diagram
+        + saveDiagram(diagram: Diagram): void
+        + getAvailableComponents(diagramType: String): List<ComponentType>
+    }
+
     MainWindow --> MenuBar
     MainWindow --> Toolbar
     MainWindow --> Canvas
     MainWindow --> PropertiesPanel
+    MainWindow --> ComponentPalette
+    MainWindow --> IBusinessLogic : interacts
 
     MenuBar --> Menu
     Menu --> MenuItem
-    Toolbar --> ToolbarAction
+    Toolbar --> Canvas : updates
     Canvas --> Diagram
     PropertiesPanel --> Component
+    ComponentPalette --> ComponentType
 }
 
-
 package "Business Logic Layer" {
+    interface IDataLayer {
+        + fetchDiagram(diagramId: String): Diagram
+        + storeDiagram(diagram: Diagram): void
+        + fetchComponents(diagramType: String): List<ComponentType>
+    }
+
+    class BusinessLogic implements IBusinessLogic {
+        - dataLayer: IDataLayer
+        + getDiagram(diagramId: String): Diagram
+        + saveDiagram(diagram: Diagram): void
+        + getAvailableComponents(diagramType: String): List<ComponentType>
+    }
+
     class Project {
         - diagrams: List<Diagram>
         + addDiagram(diagram: Diagram): void
@@ -161,7 +190,8 @@ package "Business Logic Layer" {
         + generateUseCaseCode(useCase: UseCase): String
     }
 
-    Project --> Diagram
+    BusinessLogic --> IDataLayer : interacts
+    BusinessLogic --> Diagram
     Diagram --> Component
     ClassDiagram --> Class
     ClassDiagram --> Package
@@ -170,8 +200,13 @@ package "Business Logic Layer" {
     CodeGenerator --> Diagram
 }
 
-
 package "Data Layer" {
+    class DataLayer implements IDataLayer {
+        + fetchDiagram(diagramId: String): Diagram
+        + storeDiagram(diagram: Diagram): void
+        + fetchComponents(diagramType: String): List<ComponentType>
+    }
+
     class ProjectFileManager {
         + saveProject(project: Project): void
         + loadProject(fileName: String): Project
@@ -189,18 +224,11 @@ package "Data Layer" {
         + readFromFile(filePath: String): String
     }
 
-    class FileManagerHelper {
-        + validateFilePath(filePath: String): boolean
-        + getFileExtension(filePath: String): String
-        + createBackup(filePath: String): void
-    }
-
     ProjectFileManager --> DiagramFileManager
     ProjectFileManager --> SerializationUtils
     DiagramFileManager --> SerializationUtils
-    ProjectFileManager --> FileManagerHelper
-    DiagramFileManager --> FileManagerHelper
+    ProjectFileManager --> IDataLayer : validates
+    IDataLayer <.. DataLayer
 }
-
 
 @enduml
