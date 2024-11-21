@@ -1,0 +1,234 @@
+@startuml
+
+package "UI Layer" {
+    class MainWindow {
+        - menuBar: MenuBar
+        - toolbar: Toolbar
+        - canvas: Canvas
+        - propertiesPanel: PropertiesPanel
+        - componentPalette: ComponentPalette
+        + display(): void
+        + refresh(): void
+        + close(): void
+    }
+
+    class MenuBar {
+        - fileMenu: Menu
+        - editMenu: Menu
+        - viewMenu: Menu
+        - helpMenu: Menu
+        + addMenu(menu: Menu): void
+        + removeMenu(menu: Menu): void
+        + onClick(menuItem: MenuItem): void
+    }
+
+    class Menu {
+        - name: String
+        - menuItems: List<MenuItem>
+        + addMenuItem(menuItem: MenuItem): void
+        + removeMenuItem(menuItem: MenuItem): void
+        + getMenuItems(): List<MenuItem>
+    }
+
+    class MenuItem {
+        - label: String
+        - shortcut: String
+        + triggerAction(): void
+    }
+
+    class Toolbar {
+        - actions: List<String>  // Fixed list of action names
+        + executeAction(actionName: String): void
+    }
+
+    class Canvas {
+        - currentDiagram: Diagram
+        - zoomLevel: float
+        + renderDiagram(diagram: Diagram): void
+        + handleUserEvent(event: String): void
+        + zoomIn(): void
+        + zoomOut(): void
+        + clear(): void
+    }
+
+    class PropertiesPanel {
+        - selectedComponent: Component
+        - properties: Map<String, String>
+        + updateProperties(component: Component): void
+        + saveProperties(): void
+        + resetProperties(): void
+    }
+
+    class ComponentPalette {
+        - availableComponents: List<ComponentType>
+        - currentDiagramType: String
+        + setDiagramType(diagramType: String): void
+        + getAvailableComponents(): List<ComponentType>
+        + addComponentToDiagram(componentType: ComponentType): void
+    }
+
+    class ComponentType {
+        - name: String
+        - icon: Image
+        + createComponent(): Component
+    }
+
+    interface IBusinessLogic {
+        + getDiagram(diagramId: String): Diagram
+        + saveDiagram(diagram: Diagram): void
+        + getAvailableComponents(diagramType: String): List<ComponentType>
+    }
+
+    MainWindow --> MenuBar
+    MainWindow --> Toolbar
+    MainWindow --> Canvas
+    MainWindow --> PropertiesPanel
+    MainWindow --> ComponentPalette
+    MainWindow --> IBusinessLogic : interacts
+
+    MenuBar --> Menu
+    Menu --> MenuItem
+    Toolbar --> Canvas : updates
+    Canvas --> Diagram
+    PropertiesPanel --> Component
+    ComponentPalette --> ComponentType
+}
+
+package "Business Logic Layer" {
+    interface IDataLayer {
+        + fetchDiagram(diagramId: String): Diagram
+        + storeDiagram(diagram: Diagram): void
+        + fetchComponents(diagramType: String): List<ComponentType>
+    }
+
+    class BusinessLogic implements IBusinessLogic {
+        - dataLayer: IDataLayer
+        + getDiagram(diagramId: String): Diagram
+        + saveDiagram(diagram: Diagram): void
+        + getAvailableComponents(diagramType: String): List<ComponentType>
+    }
+
+    class Project {
+        - diagrams: List<Diagram>
+        + addDiagram(diagram: Diagram): void
+        + removeDiagram(diagram: Diagram): void
+        + getDiagrams(): List<Diagram>
+    }
+
+    abstract class Diagram {
+        - components: List<Component>
+        + addComponent(component: Component): void
+        + removeComponent(component: Component): void
+        + getComponents(): List<Component>
+        + renderDiagram(): void
+    }
+
+    class ClassDiagram extends Diagram {
+        - classes: List<Class>
+        - packages: List<Package>
+        + addClass(cls: Class): void
+        + removeClass(cls: Class): void
+        + addPackage(pkg: Package): void
+        + removePackage(pkg: Package): void
+        + renderClassDiagram(): void
+    }
+
+    class UseCaseDiagram extends Diagram {
+        - actors: List<Actor>
+        - useCases: List<UseCase>
+        + addActor(actor: Actor): void
+        + removeActor(actor: Actor): void
+        + addUseCase(useCase: UseCase): void
+        + removeUseCase(useCase: UseCase): void
+        + renderUseCaseDiagram(): void
+    }
+
+    interface Component {
+        + getName(): String
+        + setName(name: String): void
+        + getProperties(): Object
+        + setProperties(properties: Object): void
+    }
+
+    class Class implements Component {
+        - name: String
+        - attributes: List<String>
+        - methods: List<String>
+        + addAttribute(attribute: String): void
+        + removeAttribute(attribute: String): void
+        + addMethod(method: String): void
+        + removeMethod(method: String): void
+        + getAttributes(): List<String>
+        + getMethods(): List<String>
+    }
+
+    class Package implements Component {
+        - name: String
+        - classes: List<Class>
+        + addClass(cls: Class): void
+        + removeClass(cls: Class): void
+        + getClasses(): List<Class>
+    }
+
+    class UseCase implements Component {
+        - name: String
+        - actors: List<Actor>
+        + addActor(actor: Actor): void
+        + removeActor(actor: Actor): void
+        + getActors(): List<Actor>
+    }
+
+    class Actor implements Component {
+        - name: String
+        + setName(name: String): void
+        + getName(): String
+    }
+
+    class CodeGenerator {
+        + generateClassCode(cls: Class): String
+        + generatePackageCode(pkg: Package): String
+        + generateUseCaseCode(useCase: UseCase): String
+    }
+
+    BusinessLogic --> IDataLayer : interacts
+    BusinessLogic --> Diagram
+    Diagram --> Component
+    ClassDiagram --> Class
+    ClassDiagram --> Package
+    UseCaseDiagram --> Actor
+    UseCaseDiagram --> UseCase
+    CodeGenerator --> Diagram
+}
+
+package "Data Layer" {
+    class DataLayer implements IDataLayer {
+        + fetchDiagram(diagramId: String): Diagram
+        + storeDiagram(diagram: Diagram): void
+        + fetchComponents(diagramType: String): List<ComponentType>
+    }
+
+    class ProjectFileManager {
+        + saveProject(project: Project): void
+        + loadProject(fileName: String): Project
+    }
+
+    class DiagramFileManager {
+        + saveDiagram(diagram: Diagram): void
+        + loadDiagram(fileName: String): Diagram
+    }
+
+    class SerializationUtils {
+        + serializeObject(obj: Object): String
+        + deserializeObject(serializedData: String): Object
+        + writeToFile(serializedData: String, filePath: String): void
+        + readFromFile(filePath: String): String
+    }
+
+    ProjectFileManager --> DiagramFileManager
+    ProjectFileManager --> SerializationUtils
+    DiagramFileManager --> SerializationUtils
+    ProjectFileManager --> IDataLayer : validates
+    IDataLayer <.. DataLayer
+}
+
+@enduml
