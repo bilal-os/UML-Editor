@@ -1,89 +1,114 @@
 package UILayer;
 
 import Utilities.Diagram;
-
+import Utilities.Component;
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
 import java.awt.*;
-import java.awt.event.*;
-import java.util.ArrayList;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
 
 public class ComponentPalette extends JPanel {
-    private JPanel contentPanel;  // Reference to content panel for updates
+    private JPanel contentPanel;
+    private PropertiesPanel propertiesPanel;
+    private Diagram diagram;
 
-    public ComponentPalette() {
-        // Use BorderLayout to have a title and scrollable content
+    public ComponentPalette(PropertiesPanel propertiesPanel) {
+
+        this.propertiesPanel = propertiesPanel;
+
         setLayout(new BorderLayout());
 
-        // Title Panel
+        // Initialize and add the title panel
+        add(createTitlePanel(), BorderLayout.NORTH);
+
+        // Initialize the content panel and wrap it in a scroll pane
+        contentPanel = createContentPanel();
+        add(createScrollPane(contentPanel), BorderLayout.CENTER);
+
+        // Overall panel styling
+        setPreferredSize(new Dimension(250, 600));
+        setBorder(createPanelBorder());
+    }
+
+    private JPanel createTitlePanel() {
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         titlePanel.setBackground(new Color(240, 240, 240));
         JLabel titleLabel = new JLabel("Component Palette");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
         titlePanel.add(titleLabel);
         titlePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
+        return titlePanel;
+    }
 
-        // Content Panel with GridBag Layout for more flexible arrangement
-        contentPanel = new JPanel(new GridBagLayout());
-        contentPanel.setBackground(Color.WHITE);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridwidth = GridBagConstraints.REMAINDER;
+    private JPanel createContentPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(Color.WHITE);
+        return panel;
+    }
 
-        // Wrap content in a scroll pane
-        JScrollPane scrollPane = new JScrollPane(contentPanel);
+    private JScrollPane createScrollPane(JPanel panel) {
+        JScrollPane scrollPane = new JScrollPane(panel);
         scrollPane.setBorder(null);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        return scrollPane;
+    }
 
-        // Add components to main panel
-        add(titlePanel, BorderLayout.NORTH);
-        add(scrollPane, BorderLayout.CENTER);
-
-        // Overall panel styling
-        setPreferredSize(new Dimension(250, 600));
-        setBorder(BorderFactory.createCompoundBorder(
+    private CompoundBorder createPanelBorder() {
+        return BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1),
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)
-        ));
+        );
     }
 
     public void displayComponents(Diagram diagram) {
-        // Clear existing components
-        contentPanel.removeAll();
 
-        // Get component names from diagram
-        ArrayList<String> componentNames = (ArrayList<String>) diagram.getComponentNames();
+        this.diagram = diagram;
+
+        contentPanel.removeAll(); // Clear existing content
+
+        List<String> componentNames = diagram.getComponentNames();
 
         if (componentNames == null || componentNames.isEmpty()) {
-            // Show empty state
-            JLabel emptyLabel = new JLabel("No components available");
-            emptyLabel.setForeground(Color.GRAY);
-            contentPanel.add(emptyLabel);
+            displayEmptyState();
         } else {
-            // Setup constraints for grid
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridx = 0;
-            gbc.gridy = 0;
-            gbc.weightx = 1.0;
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.insets = new Insets(5, 5, 5, 5);
-
-            // Add component items
-            for (String componentName : componentNames) {
-                JPanel itemPanel = createComponentItem(componentName);
-                contentPanel.add(itemPanel, gbc);
-                gbc.gridy++;
-            }
-
-            // Add vertical glue to push items to top
-            gbc.weighty = 1.0;
-            contentPanel.add(Box.createVerticalGlue(), gbc);
+            displayComponentItems(componentNames);
         }
 
-        // Refresh the panel
+        // Refresh the panel to show updates
         contentPanel.revalidate();
         contentPanel.repaint();
+    }
+
+    private void displayEmptyState() {
+        JLabel emptyLabel = new JLabel("No components available", SwingConstants.CENTER);
+        emptyLabel.setForeground(Color.GRAY);
+        contentPanel.add(emptyLabel, new GridBagConstraints());
+    }
+
+    private void displayComponentItems(List<String> componentNames) {
+        GridBagConstraints gbc = createGridBagConstraints();
+
+        for (String componentName : componentNames) {
+            contentPanel.add(createComponentItem(componentName), gbc);
+            gbc.gridy++; // Move to the next row
+        }
+
+        // Add vertical glue to push items to the top
+        gbc.weighty = 1.0;
+        contentPanel.add(Box.createVerticalGlue(), gbc);
+    }
+
+    private GridBagConstraints createGridBagConstraints() {
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
+        return gbc;
     }
 
     private JPanel createComponentItem(String componentName) {
@@ -93,20 +118,31 @@ public class ComponentPalette extends JPanel {
 
         JLabel nameLabel = new JLabel(componentName, SwingConstants.CENTER);
         nameLabel.setBorder(BorderFactory.createEmptyBorder(8, 10, 8, 10));
-
         itemPanel.add(nameLabel, BorderLayout.CENTER);
 
-        // Add hover effect
+        addHoverEffect(itemPanel, componentName);
+        return itemPanel;
+    }
+
+    private void addHoverEffect(JPanel itemPanel, String componentName) {
         itemPanel.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseEntered(MouseEvent e) {
                 itemPanel.setBackground(new Color(245, 245, 245));
             }
 
+            @Override
             public void mouseExited(MouseEvent e) {
                 itemPanel.setBackground(Color.WHITE);
             }
-        });
 
-        return itemPanel;
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+                Component component = diagram.addComponent(componentName);;
+                propertiesPanel.displayProperties(component);
+            }
+
+        });
     }
 }

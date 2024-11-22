@@ -67,10 +67,10 @@ public class MainWindow extends JFrame {
      */
     private void initializePanels() {
         // Initialize core components
-        componentPalette = new ComponentPalette();
+        propertiesPanel = new PropertiesPanel();
+        componentPalette = new ComponentPalette(propertiesPanel);
         diagramsPanel = new DiagramsPanel(diagrams, componentPalette);
         canvas = new Canvas();
-        propertiesPanel = new PropertiesPanel();
 
         // Set up side panel
         sidePanel = new JPanel();

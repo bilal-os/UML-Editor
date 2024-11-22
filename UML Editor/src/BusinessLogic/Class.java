@@ -1,7 +1,9 @@
 package BusinessLogic;
 
 import Utilities.Component;
+import Utilities.Property;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Class extends Component {
@@ -10,7 +12,26 @@ public class Class extends Component {
     private List<String> methods;
 
     public Class(String name) {
+
+        attributes = new ArrayList<>();
+        methods = new ArrayList<>();
+
+        propertiesTypes.add("Class Name");
+        propertiesTypes.add("Attribute");
+        propertiesTypes.add("Method");
+
         this.name = name;
+
+        properties.add(new Property("Class Name", name));
+
+        for(int i=0; i<attributes.size(); i++){
+            properties.add(new Property("Attribute " + i, attributes.get(i)));
+        }
+
+        for(int i=0; i<methods.size(); i++){
+            properties.add(new Property("Method " + i, methods.get(i)));
+        }
+
     }
 
     public String getName() {
