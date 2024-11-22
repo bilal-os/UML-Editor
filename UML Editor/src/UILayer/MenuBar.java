@@ -1,11 +1,24 @@
 package UILayer;
 
+import BusinessLogic.BusinessLogicInterface;
+import Utilities.Diagram;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class MenuBar extends JMenuBar {
-    public MenuBar() {
+
+    BusinessLogicInterface businessLogic;
+    ArrayList<Diagram> diagrams;
+    DiagramsPanel diagramsPanel;
+
+    public MenuBar(ArrayList<Diagram> diagrams, BusinessLogicInterface businessLogic, DiagramsPanel diagramsPanel) {
+        this.diagramsPanel = diagramsPanel;
+        this.businessLogic = businessLogic;
+        this.diagrams = diagrams;
+
         // Set a modern look for the menus
         UIManager.put("Menu.background", Color.WHITE);
         UIManager.put("MenuItem.background", Color.WHITE);
@@ -124,6 +137,8 @@ public class MenuBar extends JMenuBar {
     // Diagram menu actions
     private void createClassDiagram() {
         System.out.println("Creating Class Diagram...");
+        diagrams.add(businessLogic.createDiagram("Class Diagram"));
+        diagramsPanel.displayDiagrams();
         JOptionPane.showMessageDialog(this,
                 "Create a new Class Diagram\nSelect components from the palette",
                 "Create Class Diagram",

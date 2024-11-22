@@ -2,96 +2,140 @@ package UILayer;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+
+import BusinessLogic.BusinessLogic;
+import BusinessLogic.BusinessLogicInterface;
+import Utilities.Diagram;
+import Utilities.Project;
 
 public class MainWindow extends JFrame {
+    // UI Components
     private MenuBar menuBar;
     private Canvas canvas;
     private PropertiesPanel propertiesPanel;
     private ComponentPalette componentPalette;
     private DiagramsPanel diagramsPanel;
-    JPanel workspacePanel;
-    JPanel sidePanel;
+    private JPanel workspacePanel;
+    private JPanel sidePanel;
 
-    public MainWindow() {
-        // Set up the main window with more modern look
+    // Business Logic and Data
+    private final BusinessLogicInterface businessLogic;
+    private final ArrayList<Diagram> diagrams;
+    private final Project project;
+
+    public MainWindow(BusinessLogicInterface businessLogic) {
+        // Initialize business logic and project
+        this.businessLogic = businessLogic;
+        this.project = new Project(1, "Project 101");
+        this.diagrams = project.getDiagrams();
+
+        // Set up the main window
+        initializeFrame();
+
+        // Initialize UI components
+        initializePanels();
+        initializeMenuBar();
+
+
+        // Assemble the UI
+        assembleWorkspace();
+        addStatusBar(project.getName());
+    }
+
+    /**
+     * Initializes the main window frame.
+     */
+    private void initializeFrame() {
         setTitle("UML Diagram Designer");
-        setSize(1200, 800);  // Increased window size for better workspace
+        setSize(1200, 800);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+        setLayout(new BorderLayout(15, 15)); // Layout with spacing
+    }
 
-        // Use BorderLayout with increased horizontal and vertical gaps
-        setLayout(new BorderLayout(15, 15));
+    /**
+     * Initializes the menu bar.
+     */
+    private void initializeMenuBar() {
+        menuBar = new MenuBar(diagrams, businessLogic, diagramsPanel);
+        setJMenuBar(menuBar);
+    }
 
-        // Initialize components
-        menuBar = new MenuBar();
+    /**
+     * Initializes all panels and UI components.
+     */
+    private void initializePanels() {
+        // Initialize core components
+        componentPalette = new ComponentPalette();
+        diagramsPanel = new DiagramsPanel(diagrams, componentPalette);
         canvas = new Canvas();
         propertiesPanel = new PropertiesPanel();
-        componentPalette = new ComponentPalette();
-        diagramsPanel = new DiagramsPanel();
 
-        // Set the menu bar
-        setJMenuBar(menuBar);
-
-        // Create a custom panel for the main workspace with padding
-        workspacePanel = new JPanel(new BorderLayout(10, 10));
-        workspacePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
-
-        // Create side panel with vertical layout
+        // Set up side panel
         sidePanel = new JPanel();
         sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
-
-        // Set preferred sizes with more flexible dimensions
-        canvas.setPreferredSize(new Dimension(700, 600));
-        componentPalette.setPreferredSize(new Dimension(250, 600));
-
-        // Add properties and diagrams panels to side panel
+        sidePanel.setPreferredSize(new Dimension(250, 600));
         sidePanel.add(diagramsPanel);
-        sidePanel.add(Box.createVerticalStrut(10)); // Add some vertical spacing
+        sidePanel.add(Box.createVerticalStrut(10)); // Vertical spacing
         sidePanel.add(componentPalette);
 
-        // Enhance visual separation with subtle borders
+        // Configure canvas
+        canvas.setPreferredSize(new Dimension(700, 600));
         canvas.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1),
                 BorderFactory.createEmptyBorder(5, 5, 5, 5)
         ));
 
-        // Add components to the workspace panel
-        workspacePanel.add(propertiesPanel, BorderLayout.EAST);
+        // Create workspace panel
+        workspacePanel = new JPanel(new BorderLayout(10, 10));
+        workspacePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    }
+
+    /**
+     * Assembles the workspace by adding panels to the main frame.
+     */
+    private void assembleWorkspace() {
         workspacePanel.add(canvas, BorderLayout.CENTER);
+        workspacePanel.add(propertiesPanel, BorderLayout.EAST);
         workspacePanel.add(sidePanel, BorderLayout.WEST);
 
-        // Add workspace to main frame
         add(workspacePanel, BorderLayout.CENTER);
+    }
 
-        // Optional: Add status bar at the bottom
-        JLabel statusBar = new JLabel("Ready", SwingConstants.LEFT);
+    /**
+     * Adds a status bar to the main window.
+     */
+    private void addStatusBar(String text) {
+        JLabel statusBar = new JLabel(text, SwingConstants.LEFT);
         statusBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         add(statusBar, BorderLayout.SOUTH);
     }
 
+    /**
+     * Displays the main window.
+     */
     public void display() {
         pack();
         setVisible(true);
     }
 
+    /**
+     * Refreshes the UI components.
+     */
     public void refresh() {
         SwingUtilities.updateComponentTreeUI(this);
     }
 
+    /**
+     * Closes the main window.
+     */
     public void close() {
         dispose();
     }
 
     public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        SwingUtilities.invokeLater(() -> {
-            MainWindow window = new MainWindow();
-            window.display();
-        });
+        MainWindow mainWindow = new MainWindow(new BusinessLogic());
+        mainWindow.display();
     }
 }

@@ -2,6 +2,14 @@
 
 package "Business Logic Layer" {
 
+    interface IBusinessLogic{
+        + openProject(): void
+        + saveProject(): void
+        + closeProject(): void
+        + createDiagram(DiagramType: String): Diagram
+
+    }
+
     interface IDataLayer {
     }
 
@@ -13,11 +21,8 @@ package "Business Logic Layer" {
     }
 
     abstract class Diagram {
-        - components: List<Component>
-        + addComponent(component: Component): void
-        + removeComponent(component: Component): void
-        + getComponents(): List<Component>
-        + renderDiagram(): void
+      - List<Component>: components
+      + getComponents(): List<Component>
     }
 
     class ClassDiagram extends Diagram {
@@ -41,12 +46,7 @@ package "Business Logic Layer" {
     }
 
     interface Component {
-        - name: String
-        + getName(): String
-        + setName(name: String): void
-        + getProperties(): Object
-        + setProperties(properties: Object): void
-    }
+        }
 
     class Class implements Component {
         - name: String
@@ -81,6 +81,8 @@ package "Business Logic Layer" {
         + getName(): String
         + setName(name: String): void
     }
+
+   
 
     BusinessLogic --> IDataLayer : interacts
     BusinessLogic --> Diagram
