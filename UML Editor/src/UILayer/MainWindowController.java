@@ -38,9 +38,17 @@ public class MainWindowController {
         menuBar.addActionListeners(new FileAction(), new EditAction(), new ViewAction(), new DiagramAction(), new HelpAction() );
         diagramsPanel.addActionListeners(new DiagramDisplayAction(), new DisplayPropertiesAction());
         componentPalette.addActionListeners(new DisplayPropertiesAction());
+        propertiesPanel.addActionListeners(new RenderDiagramsPanel());
     }
 
     //ActionListener Classes for ComponentPalette
+
+    private class RenderDiagramsPanel implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            diagramsPanel.displayDiagrams(mainWindow.getProject().getDiagrams());
+        }
+    }
 
     private class DisplayPropertiesAction implements ActionListener
     {

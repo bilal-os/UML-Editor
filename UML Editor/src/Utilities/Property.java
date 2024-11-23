@@ -4,7 +4,7 @@ public abstract class Property {
     protected String type;
     protected String value;
 
-    public  Property(String type, String value) throws IllegalArgumentException{
+    public Property(String type, String value) throws IllegalArgumentException{
 
         try{
             validateInput(type, value);

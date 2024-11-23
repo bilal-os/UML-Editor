@@ -1,17 +1,13 @@
 package BusinessLogic;
 
-import UILayer.ClassProperty;
 import Utilities.Component;
-import Utilities.Property;
-
-import java.util.ArrayList;
 
 public class Class extends Component {
 
 
     public Class(String name) {
 
-        super(name);
+        super();
 
         propertiesTypes.add("Attribute");
         propertiesTypes.add("Method");

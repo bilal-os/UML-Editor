@@ -28,8 +28,7 @@ public class PropertiesPanel extends JPanel {
     private JTextField valueTextField;
     private JButton addButton;
 
-    private ActionListener addPropertyActionListener;
-    private ActionListener editPropertyActionListener;
+    private ActionListener actionListener;
 
     public PropertiesPanel() {
         setLayout(new BorderLayout(0, 10));
@@ -246,6 +245,10 @@ public class PropertiesPanel extends JPanel {
                 String newValue = (String) getCellEditorValue();
                 Property property = component.getProperties().get(editingRow);
                 property.setValue(newValue); // Validate new value
+                if(property.gettype().contains("Name"))
+                {
+                    actionListener.actionPerformed(null);
+                }
                 return super.stopCellEditing();
             } catch (IllegalArgumentException ex) {
                 CustomMessageDialog.showError(propertiesTable, ex.getLocalizedMessage(), "Validation Error");
@@ -254,10 +257,9 @@ public class PropertiesPanel extends JPanel {
         }
     }
 
-    public void addActionListeners(ActionListener addPropertyActionListener, ActionListener editPropertyActionListener)
+    public void addActionListeners(ActionListener actionListener)
     {
-        this.addPropertyActionListener=addPropertyActionListener;
-        this.editPropertyActionListener=editPropertyActionListener;
+        this.actionListener=actionListener;
     }
 
 }

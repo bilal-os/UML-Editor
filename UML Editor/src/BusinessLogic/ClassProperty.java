@@ -1,4 +1,4 @@
-package UILayer;
+package BusinessLogic;
 
 import Utilities.Property;
 
@@ -25,7 +25,13 @@ public class ClassProperty extends Property {
     public void validateInput(String type, String value) throws IllegalArgumentException {
 
         // Validate based on property type
-        if ("Attribute".equals(type)) {
+        if("Class Name".equals(type))
+        {
+            if (!isValidName(value)) {
+                throw new IllegalArgumentException("Invalid syntax for Name. Expected: A non-empty name starting with an uppercase letter, followed by letters, numbers, or underscores.");
+            }
+        }
+        else if ("Attribute".equals(type)) {
             if (!isValidAttribute(value)) {
                 throw new IllegalArgumentException("Invalid syntax for Attribute. Expected: visibility name : type (e.g., + age : int)");
             }
@@ -36,6 +42,23 @@ public class ClassProperty extends Property {
         }
 
     }
+    private boolean isValidName(String value) {
+        // Check if the value is null or empty
+        if (value == null || value.trim().isEmpty()) {
+            return false;
+        }
+
+        // Regular Expression to match valid class names
+        // Explanation:
+        // ^[A-Z]: Starts with an uppercase letter
+        // [A-Za-z0-9_]*$: Followed by letters, numbers, or underscores
+        String regex = "^[A-Z][A-Za-z0-9_]*$";
+
+        // Return true if value matches the regex, otherwise false
+        return value.matches(regex);
+    }
+
+
 
     // Validate Attribute syntax: visibility name : type
     private boolean isValidAttribute(String value) {
