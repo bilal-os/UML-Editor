@@ -1,16 +1,28 @@
 package BusinessLogic;
 
-import Utilities.Diagram;
+import Utilities.*;
+
+import java.util.ArrayList;
 
 public class BusinessLogic implements BusinessLogicInterface {
-    public Project openProject()
+
+    private ArrayList<Project> projects;
+
+    public BusinessLogic()
     {
-        return null;
+        projects = new ArrayList<Project>();
     }
 
-    public Project createProject(String name)
+    public Project openProject()
     {
-        return null;
+        return new Project(1,"dummy");
+    }
+
+    public Project createProject(int id, String name)
+    {
+        Project project = new Project(id,name);
+        projects.add(project);
+        return project;
     }
 
     public boolean saveProject(Project project)
@@ -18,14 +30,23 @@ public class BusinessLogic implements BusinessLogicInterface {
         return false;
     }
 
-    public Diagram createDiagram(String type)
-    {
-        if(type.equals("Class Diagram"))
-        {
-            return new ClassDiagram();
+    public void createDiagram(int projectId, String type) throws Exception {
+        boolean found =false;
+        for (Project project : projects) {
+            if (project.getId() == projectId) {
+                found = true;
+                if (type.equals("Class Diagram")) {
+                    project.addDiagram(new ClassDiagram());
+                }
+                break;
+            }
         }
 
-        return null;
+        if(!found)
+        {
+            throw new Exception("No such Project Exists");
+        }
+
     }
 
 }

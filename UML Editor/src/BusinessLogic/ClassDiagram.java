@@ -23,6 +23,24 @@ public class ClassDiagram extends Diagram {
             components.add(component);
             return component;
         }
+        else if(componentName.equals("Interface"))
+        {
+            component = new Class("New Interface");
+            components.add(component);
+            return component;
+        }
+        else if(componentName.equals("Enum"))
+        {
+            component = new Class("New Enum");
+            components.add(component);
+            return component;
+        }
+        else if(componentName.equals("Relationship"))
+        {
+            component = new Class("New Relationship");
+            components.add(component);
+            return component;
+        }
         return null;
     }
 

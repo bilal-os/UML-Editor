@@ -24,10 +24,10 @@ public class MainWindow extends JFrame {
     private final ArrayList<Diagram> diagrams;
     private final Project project;
 
-    public MainWindow(BusinessLogicInterface businessLogic) {
+    public MainWindow(BusinessLogicInterface businessLogic, Project project) {
         // Initialize business logic and project
         this.businessLogic = businessLogic;
-        this.project = new Project(1, "Project 101");
+        this.project = project;
         this.diagrams = project.getDiagrams();
 
         // Set up the main window
@@ -37,10 +37,39 @@ public class MainWindow extends JFrame {
         initializePanels();
         initializeMenuBar();
 
-
         // Assemble the UI
         assembleWorkspace();
         addStatusBar(project.getName());
+    }
+
+    public MenuBar getMenu()
+    {
+        return menuBar;
+    }
+
+    public Canvas getCanvas()
+    {
+        return canvas;
+    }
+
+    public PropertiesPanel getPropertiesPanel()
+    {
+        return propertiesPanel;
+    }
+
+    public ComponentPalette getComponentPalette()
+    {
+        return componentPalette;
+    }
+
+    public DiagramsPanel getDiagramsPanel()
+    {
+        return diagramsPanel;
+    }
+
+    public Project getProject()
+    {
+        return project;
     }
 
     /**
@@ -58,7 +87,7 @@ public class MainWindow extends JFrame {
      * Initializes the menu bar.
      */
     private void initializeMenuBar() {
-        menuBar = new MenuBar(diagrams, businessLogic, diagramsPanel);
+        menuBar = new MenuBar();
         setJMenuBar(menuBar);
     }
 
@@ -68,8 +97,8 @@ public class MainWindow extends JFrame {
     private void initializePanels() {
         // Initialize core components
         propertiesPanel = new PropertiesPanel();
-        componentPalette = new ComponentPalette(propertiesPanel);
-        diagramsPanel = new DiagramsPanel(diagrams, componentPalette);
+        componentPalette = new ComponentPalette();
+        diagramsPanel = new DiagramsPanel();
         canvas = new Canvas();
 
         // Set up side panel
@@ -134,8 +163,4 @@ public class MainWindow extends JFrame {
         dispose();
     }
 
-    public static void main(String[] args) {
-        MainWindow mainWindow = new MainWindow(new BusinessLogic());
-        mainWindow.display();
-    }
 }

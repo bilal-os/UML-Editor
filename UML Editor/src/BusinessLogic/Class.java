@@ -11,7 +11,7 @@ public class Class extends Component {
 
     public Class(String name) {
 
-        super();
+        super(name);
 
         propertiesTypes.add("Attribute");
         propertiesTypes.add("Method");

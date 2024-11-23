@@ -5,18 +5,19 @@ import Utilities.Component;
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class ComponentPalette extends JPanel {
     private JPanel contentPanel;
-    private PropertiesPanel propertiesPanel;
     private Diagram diagram;
 
-    public ComponentPalette(PropertiesPanel propertiesPanel) {
+    private ActionListener actionListener;
 
-        this.propertiesPanel = propertiesPanel;
+    public ComponentPalette() {
 
         setLayout(new BorderLayout());
 
@@ -140,9 +141,20 @@ public class ComponentPalette extends JPanel {
             public void mousePressed(MouseEvent e)
             {
                 Component component = diagram.addComponent(componentName);;
-                propertiesPanel.displayProperties(component);
+
+                if(actionListener != null)
+                {
+                    actionListener.actionPerformed(new ActionEvent(component,ActionEvent.ACTION_PERFORMED,component.getName()));
+
+                }
             }
 
         });
     }
+
+    public void addActionListeners(ActionListener actionListener)
+    {
+        this.actionListener = actionListener;
+    }
+
 }

@@ -1,10 +1,10 @@
 package BusinessLogic;
 
-import Utilities.Diagram;
+import Utilities.*;
 
 public interface BusinessLogicInterface {
     public Project openProject();
-    public Project createProject(String name);
+    public Project createProject(int id, String name);
     public boolean saveProject(Project project);
-    public Diagram createDiagram(String type);
+    public void createDiagram(int projectId, String type) throws Exception;
 }

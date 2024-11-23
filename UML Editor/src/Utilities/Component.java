@@ -5,10 +5,15 @@ import java.util.ArrayList;
 public abstract class Component {
     protected ArrayList<Property> properties;
     protected ArrayList<String> propertiesTypes;
-
-    public Component() {
+    private String name;
+    public Component(String name) {
+        this.name = name;
         properties = new ArrayList<>();
         propertiesTypes = new ArrayList<>();
+    }
+
+    public String getName() {
+        return name;
     }
 
     public ArrayList<String> getPropertiesTypes() {

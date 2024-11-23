@@ -7,6 +7,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import Utilities.Component;
@@ -26,6 +27,9 @@ public class PropertiesPanel extends JPanel {
     private JComboBox<String> propertyTypeComboBox;
     private JTextField valueTextField;
     private JButton addButton;
+
+    private ActionListener addPropertyActionListener;
+    private ActionListener editPropertyActionListener;
 
     public PropertiesPanel() {
         setLayout(new BorderLayout(0, 10));
@@ -176,7 +180,8 @@ public class PropertiesPanel extends JPanel {
         String selectedType = (String) propertyTypeComboBox.getSelectedItem();
         String value = valueTextField.getText().trim();
 
-        if (selectedType == null || value.isEmpty()) {
+        if (selectedType == null || value.isEmpty())
+        {
             CustomMessageDialog.showError(this, "Please select a type and enter a value.", "Input Error");
             return;
         }
@@ -248,4 +253,11 @@ public class PropertiesPanel extends JPanel {
             }
         }
     }
+
+    public void addActionListeners(ActionListener addPropertyActionListener, ActionListener editPropertyActionListener)
+    {
+        this.addPropertyActionListener=addPropertyActionListener;
+        this.editPropertyActionListener=editPropertyActionListener;
+    }
+
 }
