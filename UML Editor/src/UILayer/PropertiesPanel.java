@@ -1,155 +1,239 @@
 package UILayer;
 
-import Utilities.Property;
-import Utilities.Component;
-
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
+import javax.swing.table.JTableHeader;
 import java.awt.*;
+import java.util.ArrayList;
+
+import Utilities.Component;
+import Utilities.Property;
 
 public class PropertiesPanel extends JPanel {
+    private static final Color PRIMARY_COLOR = new Color(51, 153, 255);
+    private static final Color BACKGROUND_COLOR = new Color(248, 249, 250);
+    private static final Color HEADER_COLOR = new Color(240, 240, 240);
+    private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 16);
+    private static final Font REGULAR_FONT = new Font("Segoe UI", Font.PLAIN, 12);
+
     private JTable propertiesTable;
     private DefaultTableModel tableModel;
     private Component component;
-
-    static class ButtonRenderer extends JButton implements TableCellRenderer {
-        public ButtonRenderer() {
-            setOpaque(true);
-        }
-
-        public ButtonRenderer getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            setText((value == null) ? "Delete" : value.toString());
-            return this;
-        }
-    }
-
-    class ButtonEditor extends DefaultCellEditor {
-        private final JButton button;
-        private String label;
-        private boolean clicked;
-        private int row;
-
-        public ButtonEditor(JCheckBox checkBox) {
-            super(checkBox);
-            button = new JButton();
-            button.setOpaque(true);
-            button.addActionListener(e -> fireEditingStopped());
-        }
-
-        @Override
-        public JButton getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-            label = (value == null) ? "Delete" : value.toString();
-            button.setText(label);
-            clicked = true;
-            this.row = row;
-            return button;
-        }
-
-        @Override
-        public Object getCellEditorValue() {
-            if (clicked) {
-                // Perform delete operation
-                deleteProperty(row);
-            }
-            clicked = false;
-            return label;
-        }
-
-        @Override
-        public boolean stopCellEditing() {
-            clicked = false;
-            return super.stopCellEditing();
-        }
-
-        @Override
-        protected void fireEditingStopped() {
-            super.fireEditingStopped();
-        }
-    }
+    private JComboBox<String> propertyTypeComboBox;
+    private JTextField valueTextField;
+    private JButton addButton;
 
     public PropertiesPanel() {
-        setupPanel();
-    }
-
-    private void setupPanel() {
-        setLayout(new BorderLayout(10, 10));
-        setPreferredSize(new Dimension(450, 700));
-        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        setLayout(new BorderLayout(0, 10));
+        setBackground(BACKGROUND_COLOR);
 
         add(createTitlePanel(), BorderLayout.NORTH);
-        add(createTableScrollPane(), BorderLayout.CENTER);
+        add(createTablePanel(), BorderLayout.CENTER);
+        add(createFormPanel(), BorderLayout.SOUTH);
+
+        setPreferredSize(new Dimension(450, 600));
+        setBorder(createPanelBorder());
     }
 
     private JPanel createTitlePanel() {
-        JLabel titleLabel = new JLabel("Properties Panel", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        titleLabel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
-
         JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.setBackground(HEADER_COLOR);
+
+        JLabel titleLabel = new JLabel("Properties Panel");
+        titleLabel.setFont(TITLE_FONT);
+        titleLabel.setForeground(new Color(51, 51, 51));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+
         titlePanel.add(titleLabel, BorderLayout.CENTER);
-        titlePanel.setBackground(new Color(240, 240, 240));
+        titlePanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(218, 220, 224)),
+                BorderFactory.createEmptyBorder(0, 0, 5, 0)
+        ));
+
         return titlePanel;
     }
 
-    private JScrollPane createTableScrollPane() {
-        String[] columnNames = {"Property Type", "Value", "Action"};
+    private JPanel createTablePanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(BACKGROUND_COLOR);
 
-        tableModel = new DefaultTableModel(columnNames, 0) {
+        tableModel = new DefaultTableModel(new Object[]{"Type", "Value"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column < 2; // Allow editing for 'Property Type' and 'Value'
+                return column == 1;
             }
         };
 
-        propertiesTable = new JTable(tableModel) {
+        propertiesTable = new JTable(tableModel);
+        propertiesTable.setFont(REGULAR_FONT);
+        propertiesTable.setRowHeight(30);
+        propertiesTable.setShowGrid(true);
+        propertiesTable.setGridColor(new Color(230, 230, 230));
+        propertiesTable.setSelectionBackground(new Color(232, 240, 254));
+        propertiesTable.setSelectionForeground(Color.BLACK);
+
+        // Style the table header
+        JTableHeader header = propertiesTable.getTableHeader();
+        header.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        header.setBackground(HEADER_COLOR);
+        header.setForeground(new Color(51, 51, 51));
+        header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(218, 220, 224)));
+
+        // Add listener for value changes
+        tableModel.addTableModelListener(new TableModelListener() {
             @Override
-            public Class<?> getColumnClass(int column) {
-                return column == 2 ? JButton.class : super.getColumnClass(column);
+            public void tableChanged(TableModelEvent e) {
+                if (e.getColumn() == 1 && component != null) {
+                    String newValue = (String) tableModel.getValueAt(e.getFirstRow(), e.getColumn());
+                    Property property = component.getProperties().get(e.getFirstRow());
+                    property.setValue(newValue);
+                }
             }
-        };
-        configureTable();
-        return new JScrollPane(propertiesTable);
+        });
+
+        JScrollPane scrollPane = new JScrollPane(propertiesTable);
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(218, 220, 224)));
+        scrollPane.getViewport().setBackground(Color.WHITE);
+
+        panel.add(scrollPane, BorderLayout.CENTER);
+        return panel;
     }
 
-    private void configureTable() {
-        propertiesTable.setRowHeight(40);
-        propertiesTable.setFont(new Font("Segoe UI", Font.PLAIN, 14));
-        propertiesTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+    private JPanel createFormPanel() {
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBackground(BACKGROUND_COLOR);
+        formPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(new Color(218, 220, 224)),
+                        "Add New Property",
+                        javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION,
+                        javax.swing.border.TitledBorder.DEFAULT_POSITION,
+                        new Font("Segoe UI", Font.BOLD, 12),
+                        new Color(51, 51, 51)
+                ),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
 
-        // Configure Action column
-        TableColumn actionColumn = propertiesTable.getColumnModel().getColumn(2);
-        actionColumn.setCellRenderer(new ButtonRenderer());
-        actionColumn.setCellEditor(new ButtonEditor(new JCheckBox()));
+        // Create input panel for better alignment
+        JPanel inputPanel = new JPanel(new GridBagLayout());
+        inputPanel.setBackground(BACKGROUND_COLOR);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        // Type ComboBox
+        JLabel typeLabel = new JLabel("Type:");
+        typeLabel.setFont(REGULAR_FONT);
+        propertyTypeComboBox = new JComboBox<>();
+        propertyTypeComboBox.setFont(REGULAR_FONT);
+        propertyTypeComboBox.setPreferredSize(new Dimension(200, 30));
+
+        // Value TextField
+        JLabel valueLabel = new JLabel("Value:");
+        valueLabel.setFont(REGULAR_FONT);
+        valueTextField = new JTextField();
+        valueTextField.setFont(REGULAR_FONT);
+        valueTextField.setPreferredSize(new Dimension(200, 30));
+
+        // Add button with modern styling
+        addButton = createStyledButton("Add Property");
+
+        // Layout components
+        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
+        inputPanel.add(typeLabel, gbc);
+        gbc.gridx = 1; gbc.weightx = 1;
+        inputPanel.add(propertyTypeComboBox, gbc);
+        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
+        inputPanel.add(valueLabel, gbc);
+        gbc.gridx = 1; gbc.weightx = 1;
+        inputPanel.add(valueTextField, gbc);
+
+        // Button panel for center alignment
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setBackground(BACKGROUND_COLOR);
+        buttonPanel.add(addButton);
+
+        formPanel.add(inputPanel);
+        formPanel.add(Box.createVerticalStrut(10));
+        formPanel.add(buttonPanel);
+
+        return formPanel;
     }
 
-    private void deleteProperty(int selectedRow) {
-        if (selectedRow != -1) {
-            // Remove from component properties if linked
-            if (component != null && selectedRow < component.getProperties().size()) {
-                component.getProperties().remove(selectedRow);
-            }
-            // Remove row from table model
-            tableModel.removeRow(selectedRow);
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        button.setForeground(Color.WHITE);
+        button.setBackground(PRIMARY_COLOR);
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-            // Refresh the table to reflect changes
-            refreshTableData();
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(PRIMARY_COLOR.darker());
+            }
+
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(PRIMARY_COLOR);
+            }
+        });
+
+        button.addActionListener(e -> addNewProperty());
+        return button;
+    }
+
+    private CompoundBorder createPanelBorder() {
+        return BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(218, 220, 224), 1),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        );
+    }
+
+    private void addNewProperty() {
+        if (component == null) return;
+
+        String selectedType = (String) propertyTypeComboBox.getSelectedItem();
+        String value = valueTextField.getText().trim();
+
+        if (selectedType == null || value.isEmpty()) {
+            showErrorDialog("Please select a type and enter a value.");
+            return;
         }
+
+        Property newProperty = new Property(selectedType, value);
+        component.addProperty(newProperty);
+        tableModel.addRow(new Object[]{selectedType, value});
+        valueTextField.setText("");
+    }
+
+    private void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(
+                this,
+                message,
+                "Input Error",
+                JOptionPane.ERROR_MESSAGE
+        );
     }
 
     public void displayProperties(Component component) {
         this.component = component;
-        refreshTableData();
-    }
+        tableModel.setRowCount(0);
 
-    private void refreshTableData() {
-        tableModel.setRowCount(0); // Clear the table
         if (component != null) {
-            for (Property property : component.getProperties()) {
-                tableModel.addRow(new Object[]{property.gettype(), property.getValue(), "Delete"});
+            ArrayList<Property> properties = component.getProperties();
+            for (Property property : properties) {
+                tableModel.addRow(new Object[]{property.gettype(), property.getValue()});
+            }
+
+            propertyTypeComboBox.removeAllItems();
+            for (String type : component.getPropertiesTypes()) {
+                propertyTypeComboBox.addItem(type);
             }
         }
     }
-
 }
