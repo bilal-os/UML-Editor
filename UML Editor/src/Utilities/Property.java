@@ -1,12 +1,21 @@
 package Utilities;
 
-public class Property {
-    String type;
-    String value;
+public abstract class Property {
+    protected String type;
+    protected String value;
 
-    public Property(String type, String value) {
-        this.type = type;
-        this.value = value;
+    public  Property(String type, String value) throws IllegalArgumentException{
+
+        try{
+            validateInput(type, value);
+            this.type = type;
+            this.value = value;
+        }
+       catch (IllegalArgumentException e)
+       {
+           throw new IllegalArgumentException(e);
+       }
+
     }
 
     public String gettype() {
@@ -17,9 +26,7 @@ public class Property {
         return value;
     }
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+    public abstract void validateInput(String type, String value) throws IllegalArgumentException;
 
-
+    public abstract void setValue(String value) throws IllegalArgumentException;
 }

@@ -3,9 +3,7 @@ package Utilities;
 import java.util.ArrayList;
 
 public abstract class Component {
-
     protected ArrayList<Property> properties;
-
     protected ArrayList<String> propertiesTypes;
 
     public Component() {
@@ -17,20 +15,13 @@ public abstract class Component {
         return propertiesTypes;
     }
 
-    public void addProperty(Property property) {
-        properties.add(property);
-    }
+    public abstract void addProperty(String type, String value) throws IllegalArgumentException;
 
     public ArrayList<Property> getProperties() {
         return properties;
     }
 
-    public void setProperties(ArrayList<Property> properties) {
-        this.properties = properties;
-    }
-
     public void removeProperty(Property property) {
         properties.remove(property);
     }
-
 }

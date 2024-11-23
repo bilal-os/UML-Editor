@@ -2,6 +2,7 @@ package UILayer;
 
 import BusinessLogic.BusinessLogicInterface;
 import Utilities.Diagram;
+import Utilities.CustomMessageDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -205,10 +206,7 @@ public class MenuBar extends JMenuBar {
         System.out.println("Creating Class Diagram...");
         diagrams.add(businessLogic.createDiagram("Class Diagram"));
         diagramsPanel.displayDiagrams();
-        JOptionPane.showMessageDialog(this,
-                "Create a new Class Diagram\nSelect components from the palette",
-                "Create Class Diagram",
-                JOptionPane.INFORMATION_MESSAGE);
+        CustomMessageDialog.showSuccess(this,"Select components from the palette","Class Diagram Created");
     }
 
     private void createSequenceDiagram() {

@@ -10,6 +10,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 import Utilities.Component;
+import Utilities.CustomMessageDialog;
 import Utilities.Property;
 
 public class PropertiesPanel extends JPanel {
@@ -36,6 +37,13 @@ public class PropertiesPanel extends JPanel {
 
         setPreferredSize(new Dimension(450, 600));
         setBorder(createPanelBorder());
+    }
+
+    private CompoundBorder createPanelBorder() {
+        return BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(218, 220, 224)),
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        );
     }
 
     private JPanel createTitlePanel() {
@@ -82,17 +90,8 @@ public class PropertiesPanel extends JPanel {
         header.setForeground(new Color(51, 51, 51));
         header.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(218, 220, 224)));
 
-        // Add listener for value changes
-        tableModel.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                if (e.getColumn() == 1 && component != null) {
-                    String newValue = (String) tableModel.getValueAt(e.getFirstRow(), e.getColumn());
-                    Property property = component.getProperties().get(e.getFirstRow());
-                    property.setValue(newValue);
-                }
-            }
-        });
+        // Add a custom cell editor to validate input directly
+        propertiesTable.getColumnModel().getColumn(1).setCellEditor(new ValidatingCellEditor(new JTextField()));
 
         JScrollPane scrollPane = new JScrollPane(propertiesTable);
         scrollPane.setBorder(BorderFactory.createLineBorder(new Color(218, 220, 224)));
@@ -141,15 +140,22 @@ public class PropertiesPanel extends JPanel {
 
         // Add button with modern styling
         addButton = createStyledButton("Add Property");
+        addButton.addActionListener(e -> addNewProperty());
 
         // Layout components
-        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0;
         inputPanel.add(typeLabel, gbc);
-        gbc.gridx = 1; gbc.weightx = 1;
+        gbc.gridx = 1;
+        gbc.weightx = 1;
         inputPanel.add(propertyTypeComboBox, gbc);
-        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0;
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.weightx = 0;
         inputPanel.add(valueLabel, gbc);
-        gbc.gridx = 1; gbc.weightx = 1;
+        gbc.gridx = 1;
+        gbc.weightx = 1;
         inputPanel.add(valueTextField, gbc);
 
         // Button panel for center alignment
@@ -162,6 +168,26 @@ public class PropertiesPanel extends JPanel {
         formPanel.add(buttonPanel);
 
         return formPanel;
+    }
+
+    private void addNewProperty() {
+        if (component == null) return;
+
+        String selectedType = (String) propertyTypeComboBox.getSelectedItem();
+        String value = valueTextField.getText().trim();
+
+        if (selectedType == null || value.isEmpty()) {
+            CustomMessageDialog.showError(this, "Please select a type and enter a value.", "Input Error");
+            return;
+        }
+
+        try {
+            component.addProperty(selectedType, value);
+            tableModel.addRow(new Object[]{selectedType, value});
+            valueTextField.setText("");
+        } catch (IllegalArgumentException e) {
+            CustomMessageDialog.showError(this, e.getMessage(), "Validation Error");
+        }
     }
 
     private JButton createStyledButton(String text) {
@@ -183,41 +209,7 @@ public class PropertiesPanel extends JPanel {
             }
         });
 
-        button.addActionListener(e -> addNewProperty());
         return button;
-    }
-
-    private CompoundBorder createPanelBorder() {
-        return BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(218, 220, 224), 1),
-                BorderFactory.createEmptyBorder(10, 10, 10, 10)
-        );
-    }
-
-    private void addNewProperty() {
-        if (component == null) return;
-
-        String selectedType = (String) propertyTypeComboBox.getSelectedItem();
-        String value = valueTextField.getText().trim();
-
-        if (selectedType == null || value.isEmpty()) {
-            showErrorDialog("Please select a type and enter a value.");
-            return;
-        }
-
-        Property newProperty = new Property(selectedType, value);
-        component.addProperty(newProperty);
-        tableModel.addRow(new Object[]{selectedType, value});
-        valueTextField.setText("");
-    }
-
-    private void showErrorDialog(String message) {
-        JOptionPane.showMessageDialog(
-                this,
-                message,
-                "Input Error",
-                JOptionPane.ERROR_MESSAGE
-        );
     }
 
     public void displayProperties(Component component) {
@@ -233,6 +225,26 @@ public class PropertiesPanel extends JPanel {
             propertyTypeComboBox.removeAllItems();
             for (String type : component.getPropertiesTypes()) {
                 propertyTypeComboBox.addItem(type);
+            }
+        }
+    }
+
+    private class ValidatingCellEditor extends DefaultCellEditor {
+        public ValidatingCellEditor(JTextField textField) {
+            super(textField);
+        }
+
+        @Override
+        public boolean stopCellEditing() {
+            try {
+                int editingRow = propertiesTable.getEditingRow();
+                String newValue = (String) getCellEditorValue();
+                Property property = component.getProperties().get(editingRow);
+                property.setValue(newValue); // Validate new value
+                return super.stopCellEditing();
+            } catch (IllegalArgumentException ex) {
+                CustomMessageDialog.showError(propertiesTable, ex.getLocalizedMessage(), "Validation Error");
+                return false; // Prevent the editor from stopping
             }
         }
     }
