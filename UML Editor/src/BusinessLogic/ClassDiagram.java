@@ -17,29 +17,27 @@ public class ClassDiagram extends Diagram {
     public Component addComponent(String componentName)
     {
         Component component;
-        if(componentName.equals("Class"))
-        {
-            component = new Class("NewClass");
-            components.add(component);
-            return component;
-        }
-        else if(componentName.equals("Interface"))
-        {
-            component = new Class("NewInterface");
-            components.add(component);
-            return component;
-        }
-        else if(componentName.equals("Enum"))
-        {
-            component = new Class("NewEnum");
-            components.add(component);
-            return component;
-        }
-        else if(componentName.equals("Relationship"))
-        {
-            component = new Class("NewRelationship");
-            components.add(component);
-            return component;
+        switch (componentName) {
+            case "Class" -> {
+                component = new Class("NewClass");
+                components.add(component);
+                return component;
+            }
+            case "Interface" -> {
+                component = new Interface("NewInterface");
+                components.add(component);
+                return component;
+            }
+            case "Enum" -> {
+                component = new Enumeration("NewEnum");
+                components.add(component);
+                return component;
+            }
+            case "Relationship" -> {
+                component = new Class("NewRelationship");
+                components.add(component);
+                return component;
+            }
         }
         return null;
     }

@@ -5,181 +5,206 @@ import Utilities.Component;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DiagramsPanel extends JPanel {
     private ArrayList<Diagram> diagrams;
     private JPanel contentPanel;
     private ActionListener diagramDisplayAction;
     private ActionListener propertiesDisplayAction;
+    private HashMap<String, Boolean> expandedStates;
+
+    // Simplified color scheme
+    private static final Color BACKGROUND = Color.WHITE;
+    private static final Color TEXT_PRIMARY = new Color(33, 37, 41);
+    private static final Color TEXT_SECONDARY = new Color(108, 117, 125);
+    private static final Color BORDER = new Color(229, 231, 235);
+    private static final Color HOVER = new Color(249, 250, 251);
 
     public DiagramsPanel() {
-        // Set layout to BorderLayout for future use
+        expandedStates = new HashMap<>();
+        initializeUI();
+    }
+
+    private void initializeUI() {
         setLayout(new BorderLayout());
+        setBackground(BACKGROUND);
 
-        // Title Panel
-        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        titlePanel.setBackground(new Color(240, 240, 240));
-        JLabel titleLabel = new JLabel("Diagrams Panel");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        titlePanel.add(titleLabel);
-        titlePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
-
-        // Content Panel with GridBag Layout for more flexible arrangement
+        JPanel titlePanel = createTitlePanel();
         contentPanel = new JPanel(new GridBagLayout());
-        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setBackground(BACKGROUND);
 
-        // Wrap content in a scroll pane
-        JScrollPane scrollPane = new JScrollPane(contentPanel);
-        scrollPane.setBorder(null);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        JScrollPane scrollPane = createScrollPane();
 
-        // Add components to main panel
         add(titlePanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Overall panel styling
-        setPreferredSize(new Dimension(250, 600));
-        setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1),
-                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        setPreferredSize(new Dimension(280, 600));
+        setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, BORDER));
+    }
+
+    private JPanel createTitlePanel() {
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.setBackground(BACKGROUND);
+        titlePanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER),
+                BorderFactory.createEmptyBorder(16, 16, 16, 16)
         ));
+
+        JLabel titleLabel = new JLabel("Diagrams");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        titleLabel.setForeground(TEXT_PRIMARY);
+
+        titlePanel.add(titleLabel, BorderLayout.WEST);
+        return titlePanel;
+    }
+
+    private JScrollPane createScrollPane() {
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setBorder(null);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(8, 0));
+        return scrollPane;
     }
 
     public void displayDiagrams(ArrayList<Diagram> diagrams) {
-        // Clear existing content
         this.diagrams = diagrams;
         contentPanel.removeAll();
 
-        // Configure GridBagConstraints
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.insets = new Insets(4, 12, 0, 12);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
 
-        // Create and add diagram cards with their components
         for (Diagram diagram : diagrams) {
-            // Create diagram section
-            JPanel hierarchyPanel = createHierarchyPanel(diagram);
-            contentPanel.add(hierarchyPanel, gbc);
-            gbc.gridy++;  // Move to next row
+            if (!expandedStates.containsKey(diagram.getName())) {
+                expandedStates.put(diagram.getName(), true);
+            }
+
+            contentPanel.add(createDiagramPanel(diagram), gbc);
+            gbc.gridy++;
         }
 
-        // Add vertical glue to push cards to the top
         gbc.weighty = 1.0;
         contentPanel.add(Box.createVerticalGlue(), gbc);
 
-        // Refresh the panel
         contentPanel.revalidate();
         contentPanel.repaint();
     }
 
-    private JPanel createHierarchyPanel(Diagram diagram) {
-        // Create main panel with vertical BoxLayout
-        JPanel hierarchyPanel = new JPanel();
-        hierarchyPanel.setLayout(new BoxLayout(hierarchyPanel, BoxLayout.Y_AXIS));
-        hierarchyPanel.setBackground(Color.WHITE);
-        hierarchyPanel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.LIGHT_GRAY),
-                BorderFactory.createEmptyBorder(8, 8, 8, 8)
-        ));
+    private JPanel createDiagramPanel(Diagram diagram) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(BACKGROUND);
+        panel.setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
 
-        // Create diagram header
-        JPanel diagramHeader = createDiagramHeader(diagram);
-        hierarchyPanel.add(diagramHeader);
+        // Header
+        JPanel headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(BACKGROUND);
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
-        // Add components section
-        JPanel componentsPanel = new JPanel();
-        componentsPanel.setLayout(new BoxLayout(componentsPanel, BoxLayout.Y_AXIS));
-        componentsPanel.setBackground(Color.WHITE);
-        componentsPanel.setBorder(BorderFactory.createEmptyBorder(5, 15, 0, 0)); // Left padding for hierarchy
+        // Simplified arrow indicator
+        JLabel arrowLabel = new JLabel(expandedStates.get(diagram.getName()) ? "⌄" : "›");
+        arrowLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        arrowLabel.setForeground(TEXT_SECONDARY);
 
-        // Add components
-        for (Component component : diagram.getComponents()) {
-            JPanel componentCard = createComponentCard(component);
-            componentsPanel.add(componentCard);
-            componentsPanel.add(Box.createVerticalStrut(5)); // Add spacing between components
+        // Title and count
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
+        titlePanel.setBackground(BACKGROUND);
+
+        JLabel nameLabel = new JLabel(diagram.getName());
+        nameLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        nameLabel.setForeground(TEXT_PRIMARY);
+
+        JLabel countLabel = new JLabel(String.valueOf(diagram.getComponents().size()));
+        countLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        countLabel.setForeground(TEXT_SECONDARY);
+
+        titlePanel.add(arrowLabel);
+        titlePanel.add(nameLabel);
+        titlePanel.add(countLabel);
+
+        headerPanel.add(titlePanel, BorderLayout.CENTER);
+
+        // Click handling
+        headerPanel.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+                expandedStates.put(diagram.getName(), !expandedStates.get(diagram.getName()));
+                displayDiagrams(diagrams);
+                if (diagramDisplayAction != null) {
+                    diagramDisplayAction.actionPerformed(
+                            new ActionEvent(diagram, ActionEvent.ACTION_PERFORMED, diagram.getName())
+                    );
+                }
+            }
+
+            public void mouseEntered(MouseEvent e) {
+                headerPanel.setBackground(HOVER);
+                titlePanel.setBackground(HOVER);
+            }
+
+            public void mouseExited(MouseEvent e) {
+                headerPanel.setBackground(BACKGROUND);
+                titlePanel.setBackground(BACKGROUND);
+            }
+        });
+
+        panel.add(headerPanel, BorderLayout.NORTH);
+
+        // Components section
+        if (expandedStates.get(diagram.getName())) {
+            JPanel componentsPanel = new JPanel();
+            componentsPanel.setLayout(new BoxLayout(componentsPanel, BoxLayout.Y_AXIS));
+            componentsPanel.setBackground(BACKGROUND);
+            componentsPanel.setBorder(BorderFactory.createEmptyBorder(4, 28, 4, 4));
+
+            for (Component component : diagram.getComponents()) {
+                componentsPanel.add(createComponentPanel(component));
+                componentsPanel.add(Box.createVerticalStrut(4));
+            }
+
+            panel.add(componentsPanel, BorderLayout.CENTER);
         }
 
-        hierarchyPanel.add(componentsPanel);
-
-        // Add hover effect for the entire panel
-        hierarchyPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                hierarchyPanel.setBackground(new Color(245, 245, 245));
-            }
-
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                hierarchyPanel.setBackground(Color.WHITE);
-            }
-        });
-
-        return hierarchyPanel;
+        return panel;
     }
 
-    private JPanel createDiagramHeader(Diagram diagram) {
-        JPanel headerPanel = new JPanel(new BorderLayout(5, 5));
-        headerPanel.setBackground(Color.WHITE);
+    private JPanel createComponentPanel(Component component) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(BACKGROUND);
+        panel.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
 
-        // Create title with icon indicating expandable section
-        JLabel titleLabel = new JLabel("▼ " + diagram.getName());
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        String componentName = (component.getName() != null) ?
+                component.getName() : component.getClass().getSimpleName();
 
-        headerPanel.add(titleLabel, BorderLayout.CENTER);
+        JLabel nameLabel = new JLabel(componentName);
+        nameLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        nameLabel.setForeground(TEXT_PRIMARY);
 
-        // Add click listener for diagram
-        headerPanel.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                if (diagramDisplayAction != null) {
-                    diagramDisplayAction.actionPerformed(new ActionEvent(diagram, ActionEvent.ACTION_PERFORMED, diagram.getName()));
-                }
-            }
-        });
+        panel.add(nameLabel, BorderLayout.CENTER);
 
-        return headerPanel;
-    }
-
-    private JPanel createComponentCard(Component component) {
-        JPanel card = new JPanel(new BorderLayout(5, 5));
-        card.setBackground(Color.WHITE);
-        card.setBorder(BorderFactory.createLineBorder(new Color(240, 240, 240)));
-
-        // Create label with component name or class if name is null
-        String componentText = (component.getName() != null) ? component.getName() : component.getClass().getSimpleName();
-        JLabel componentLabel = new JLabel("○ " + componentText);
-        componentLabel.setFont(new Font("Arial", Font.PLAIN, 11));
-
-        card.add(componentLabel, BorderLayout.CENTER);
-
-        // Add hover effect and click listener
-        card.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                card.setBackground(new Color(245, 245, 245));
-            }
-
-            @Override
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                card.setBackground(Color.WHITE);
-            }
-
-            @Override
-            public void mousePressed(java.awt.event.MouseEvent evt) {
+        panel.addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
                 if (propertiesDisplayAction != null) {
-                    propertiesDisplayAction.actionPerformed(new ActionEvent(component, ActionEvent.ACTION_PERFORMED, "showProperties"));
+                    propertiesDisplayAction.actionPerformed(
+                            new ActionEvent(component, ActionEvent.ACTION_PERFORMED, "showProperties")
+                    );
                 }
+            }
+
+            public void mouseEntered(MouseEvent e) {
+                panel.setBackground(HOVER);
+            }
+
+            public void mouseExited(MouseEvent e) {
+                panel.setBackground(BACKGROUND);
             }
         });
 
-        return card;
+        return panel;
     }
 
     public void addActionListeners(ActionListener diagramListener, ActionListener propertiesListener) {
