@@ -8,6 +8,10 @@ public class BusinessLogic implements BusinessLogicInterface {
 
     private ArrayList<Project> projects;
 
+    public ArrayList<Project> getProjects() {
+        return projects;
+    }
+
     public BusinessLogic()
     {
         projects = new ArrayList<Project>();

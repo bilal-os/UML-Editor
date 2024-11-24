@@ -20,15 +20,12 @@ public class MainWindow extends JFrame {
     private JPanel sidePanel;
 
     // Business Logic and Data
-    private final BusinessLogicInterface businessLogic;
-    private final ArrayList<Diagram> diagrams;
+
     private final Project project;
 
-    public MainWindow(BusinessLogicInterface businessLogic, Project project) {
+    public MainWindow( Project project) {
         // Initialize business logic and project
-        this.businessLogic = businessLogic;
         this.project = project;
-        this.diagrams = project.getDiagrams();
 
         // Set up the main window
         initializeFrame();
@@ -40,7 +37,20 @@ public class MainWindow extends JFrame {
         // Assemble the UI
         assembleWorkspace();
         addStatusBar(project.getName());
+        addCustomCloseOperation();
     }
+    private void addCustomCloseOperation() {
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // Prevent default behavior
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                // Simply dispose of this window
+                dispose();
+            }
+        });
+    }
+
+
 
     public MenuBar getMenu()
     {
@@ -159,7 +169,7 @@ public class MainWindow extends JFrame {
     /**
      * Closes the main window.
      */
-    public void close() {
+    public void close   () {
         dispose();
     }
 

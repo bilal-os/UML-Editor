@@ -21,6 +21,7 @@ public class MainWindowController {
     protected DiagramsPanel diagramsPanel;
     protected PropertiesPanel propertiesPanel;
 
+
     public MainWindowController(MainWindow mainWindow, BusinessLogicInterface businessLogic) {
 
         this.mainWindow = mainWindow;
@@ -30,6 +31,8 @@ public class MainWindowController {
         this.componentPalette=mainWindow.getComponentPalette();
         this.diagramsPanel=mainWindow.getDiagramsPanel();
         this.propertiesPanel=mainWindow.getPropertiesPanel();
+
+
 
         initialize();
     }
@@ -73,7 +76,23 @@ public class MainWindowController {
     private class FileAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+            if (e.getSource() instanceof JMenuItem source) {
+                if ("New Project".equals(source.getText())) {
+                    try {
+                        // Create a new project
+                        Project newProject = businessLogic.createProject(businessLogic.getProjects().size(), "New Project");
 
+                        // Create a new main window and controller for the project
+                        MainWindow newMainWindow = new MainWindow(newProject);
+                        MainWindowController newController = new MainWindowController(newMainWindow, businessLogic);
+
+                        // Display the new main window
+                        newMainWindow.display();
+                    } catch (Exception ex) {
+                        CustomMessageDialog.showError(mainWindow, ex.getMessage(), "Error");
+                    }
+                }
+            }
         }
     }
 
