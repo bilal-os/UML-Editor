@@ -2,6 +2,8 @@ package BusinessLogic;
 
 import Utilities.Component;
 
+import java.awt.*;
+
 public class Relationship extends Component {
 
     public Relationship(String name,String type, String source, String target) {
@@ -27,5 +29,8 @@ public class Relationship extends Component {
         }
         // Add validated property
         properties.add(new RelationshipProperty(type, value));
+    }
+    public void renderComponent(Graphics g) {
+
     }
 }

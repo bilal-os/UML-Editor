@@ -58,8 +58,6 @@ public class ClassProperty extends Property {
         return value.matches(regex);
     }
 
-
-
     // Validate Attribute syntax: visibility name : type
     private boolean isValidAttribute(String value) {
         return value.matches("^[+#\\-]\\s*\\w+\\s*:\\s*\\w+$");

@@ -2,6 +2,8 @@ package BusinessLogic;
 
 import Utilities.Component;
 
+import java.awt.*;
+
 public class Interface extends Component {
 
     public Interface(String name) {
@@ -20,5 +22,8 @@ public class Interface extends Component {
             throw new IllegalArgumentException("Invalid property type for Interface: " + type);
         }
         properties.add(new InterfaceProperty(type, value));
+    }
+    public void renderComponent(Graphics g) {
+
     }
 }

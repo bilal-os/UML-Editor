@@ -2,6 +2,8 @@ package BusinessLogic;
 
 import Utilities.Component;
 
+import java.awt.*;
+
 public class Enumeration extends Component {
 
     public Enumeration(String name) {
@@ -21,4 +23,9 @@ public class Enumeration extends Component {
         }
         properties.add(new EnumerationProperty(type, value));
     }
+
+    public void renderComponent(Graphics g) {
+
+    }
+
 }

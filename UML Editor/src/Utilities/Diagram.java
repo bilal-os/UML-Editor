@@ -1,5 +1,6 @@
 package Utilities;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,5 +29,13 @@ public abstract class Diagram {
     {
         return name;
     }
+
+    public void renderDiagram(Graphics2D g)
+    {
+        for (Component component : components) {
+            component.renderComponent(g);
+        }
+    }
+
 
 }

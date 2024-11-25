@@ -2,6 +2,8 @@ package BusinessLogic;
 
 import Utilities.Component;
 
+import java.awt.*;
+
 public class Package extends Component {
 
     public Package(String name) {
@@ -20,5 +22,8 @@ public class Package extends Component {
             throw new IllegalArgumentException("Invalid property type for Package: " + type);
         }
         properties.add(new PackageProperty(type, value));
+    }
+    public void renderComponent(Graphics g) {
+
     }
 }

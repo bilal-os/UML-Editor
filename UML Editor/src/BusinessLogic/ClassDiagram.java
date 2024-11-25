@@ -3,6 +3,8 @@ package BusinessLogic;
 import Utilities.Component;
 import Utilities.Diagram;
 
+import java.awt.*;
+
 public class ClassDiagram extends Diagram {
 
     public ClassDiagram()
@@ -41,7 +43,5 @@ public class ClassDiagram extends Diagram {
         }
         return null;
     }
-
-
 
 }

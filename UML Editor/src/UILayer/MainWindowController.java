@@ -20,6 +20,7 @@ public class MainWindowController {
     protected ComponentPalette componentPalette;
     protected DiagramsPanel diagramsPanel;
     protected PropertiesPanel propertiesPanel;
+    protected Canvas canvas;
 
 
     public MainWindowController(MainWindow mainWindow, BusinessLogicInterface businessLogic) {
@@ -31,7 +32,7 @@ public class MainWindowController {
         this.componentPalette=mainWindow.getComponentPalette();
         this.diagramsPanel=mainWindow.getDiagramsPanel();
         this.propertiesPanel=mainWindow.getPropertiesPanel();
-
+        this.canvas=mainWindow.getCanvas();
 
 
         initialize();
@@ -69,6 +70,7 @@ public class MainWindowController {
         public void actionPerformed(ActionEvent e) {
             Diagram diagram = (Diagram) e.getSource();
             componentPalette.displayComponents(diagram);
+            canvas.setDiagram(diagram);
         }
     }
 
