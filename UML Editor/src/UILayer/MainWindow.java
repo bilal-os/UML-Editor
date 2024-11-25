@@ -50,8 +50,6 @@ public class MainWindow extends JFrame {
         });
     }
 
-
-
     public MenuBar getMenu()
     {
         return menuBar;

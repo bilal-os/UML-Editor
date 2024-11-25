@@ -6,26 +6,40 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public abstract class Component {
+
     protected ArrayList<Property> properties;
     protected ArrayList<String> propertiesTypes;
-    protected int x_coordinate;
-    protected int y_coordinate;
-    protected String name;
+    protected CoordianteProperty x_coordinate;
+    protected CoordianteProperty y_coordinate;
+    protected ArrayList<Observer> observers;
 
-    public Component(String name) {
-        x_coordinate = 0;
-        y_coordinate = 0;
-        this.name = name;
+    public Component() {
+        x_coordinate = new CoordianteProperty("X Coordinate",50);
+        y_coordinate = new CoordianteProperty("Y Coordinate",50);
         properties = new ArrayList<>();
         propertiesTypes = new ArrayList<>();
-        properties.add(new CoordianteProperty("X Coordinate",x_coordinate));
-        properties.add(new CoordianteProperty("Y Coordinate",y_coordinate));
+        properties.add(x_coordinate);
+        properties.add(y_coordinate);
         propertiesTypes.add("X Coordinate");
         propertiesTypes.add("Y Coordinate");
     }
 
     public String getName() {
-        return name;
+        for (Property property : properties) {
+            if (property.gettype().contains("Name")) {
+               return property.getValue();
+            }
+        }
+        return "";
+    }
+
+    public Property getNameProperty(){
+        for (Property property : properties) {
+            if (property.gettype().contains("Name")) {
+                return property;
+            }
+        }
+        return null;
     }
 
     public ArrayList<String> getPropertiesTypes() {
@@ -43,5 +57,13 @@ public abstract class Component {
     }
 
     public abstract void renderComponent(Graphics g);
+
+    public Property getXCoordinate() {
+        return x_coordinate;
+    }
+
+    public Property getYCoordinate() {
+        return y_coordinate;
+    }
 
 }

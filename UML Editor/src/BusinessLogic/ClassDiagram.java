@@ -16,7 +16,7 @@ public class ClassDiagram extends Diagram {
         componentNames.add("Relationship");
     }
 
-    public Component addComponent(String componentName)
+    public Component createComponent(String componentName)
     {
         Component component;
         switch (componentName) {

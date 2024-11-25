@@ -1,8 +1,11 @@
 package Utilities;
 
-public abstract class Property {
+import java.util.ArrayList;
+
+public abstract class Property implements Subject{
     protected String type;
     protected String value;
+    protected ArrayList<Observer> observers;
 
     public Property(String type, String value) throws IllegalArgumentException{
 
@@ -29,4 +32,20 @@ public abstract class Property {
     public abstract void validateInput(String type, String value) throws IllegalArgumentException;
 
     public abstract void setValue(String value) throws IllegalArgumentException;
+
+    public void addObserver(Observer observer)
+    {
+        observers.add(observer);
+    }
+    public void removeObserver(Observer observer)
+    {
+        observers.remove(observer);
+    }
+    public void notifyObservers() {
+        for(Observer observer : observers)
+        {
+            observer.update();
+        }
+    }
+
 }

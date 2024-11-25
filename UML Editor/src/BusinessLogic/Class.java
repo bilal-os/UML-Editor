@@ -5,12 +5,13 @@ import Utilities.Property;
 
 import java.awt.*;
 
-public class Class extends Component {
+import static java.lang.Integer.parseInt;
 
+public class Class extends Component {
 
     public Class(String name) {
 
-        super(name);
+        super();
 
         propertiesTypes.add("Attribute");
         propertiesTypes.add("Method");
@@ -18,7 +19,6 @@ public class Class extends Component {
         // Add default property
         properties.add(new ClassProperty("Class Name", name));
     }
-
 
     @Override
     public void addProperty(String type, String value) throws IllegalArgumentException {
@@ -38,67 +38,59 @@ public class Class extends Component {
     public void renderComponent(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
-        // Enable antialiasing for smoother rendering
+        // Enable antialiasing
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Define dimensions and position of the class box
-        x_coordinate = 50; // Example x-coordinate
-        y_coordinate = 50; // Example y-coordinate
-        int width = 150; // Width of the class box
-        int headerHeight = 30; // Height for the class name header
-        int sectionHeight = 80; // Height for attributes and methods
+        int x = parseInt(x_coordinate.getValue());
+        int y = parseInt(y_coordinate.getValue());
+        int width = 180;
+        int height = 215;
 
-        // Draw the outer rectangle for the class
+        // Draw outer box
+        g2d.setColor(new Color(245, 245, 245));
+        g2d.fillRect(x, y, width, height);
+
+        // Draw sections
+        drawHeader(g2d, x, y, width);
+        drawAttributes(g2d, x, y + 35, width, 90);
+        drawMethods(g2d, x, y + 125, width, 90);
+
+        // Draw border
+        g2d.setColor(Color.GRAY);
+        g2d.drawRect(x, y, width, height);
+    }
+
+    private void drawHeader(Graphics2D g2d, int x, int y, int width) {
+        g2d.setColor(new Color(220, 220, 250));
+        g2d.fillRect(x, y, width, 35);
         g2d.setColor(Color.BLACK);
-        g2d.drawRect(x_coordinate, y_coordinate, width, headerHeight + 2 * sectionHeight);
+        g2d.drawString(getName(), x + 10, y + 22);
+    }
 
-        // Draw the header (class name section)
-        g2d.setColor(new Color(200, 200, 255)); // Light blue background for header
-        g2d.fillRect(x_coordinate, y_coordinate, width, headerHeight);
-        g2d.setColor(Color.BLACK);
-        g2d.drawRect(x_coordinate, y_coordinate, width, headerHeight);
-
-        // Draw the class name
-        String className = "";
-
-        for (Property property : properties) {
-            if (property.gettype().contains("Name")) {
-                className = property.getValue();
-            }
-        }
-
-        // Assuming first property is the class name
-        g2d.setFont(new Font("Arial", Font.BOLD, 14));
-        g2d.drawString(className, x_coordinate + 10, y_coordinate + 20);
-
-        // Draw the attributes section
-        int attributesY = y_coordinate + headerHeight;
+    private void drawAttributes(Graphics2D g2d, int x, int y, int width, int height) {
         g2d.setColor(Color.WHITE);
-        g2d.fillRect(x_coordinate, attributesY, width, sectionHeight);
-        g2d.setColor(Color.BLACK);
-        g2d.drawRect(x_coordinate, attributesY, width, sectionHeight);
+        g2d.fillRect(x, y, width, height);
 
-        g2d.setFont(new Font("Arial", Font.PLAIN, 12));
-        int textY = attributesY + 20; // Start y position for attributes text
+        g2d.setColor(Color.BLACK);
+        int textY = y + 15;
         for (Property attribute : properties) {
             if (attribute.gettype().equals("Attribute")) {
-                g2d.drawString(attribute.getValue(), x_coordinate + 10, textY);
-                textY += 15; // Line spacing
+                g2d.drawString(attribute.getValue(), x + 10, textY);
+                textY += 15;
             }
         }
+    }
 
-        // Draw the methods section
-        int methodsY = attributesY + sectionHeight;
+    private void drawMethods(Graphics2D g2d, int x, int y, int width, int height) {
         g2d.setColor(Color.WHITE);
-        g2d.fillRect(x_coordinate, methodsY, width, sectionHeight);
-        g2d.setColor(Color.BLACK);
-        g2d.drawRect(x_coordinate, methodsY, width, sectionHeight);
+        g2d.fillRect(x, y, width, height);
 
-        textY = methodsY + 20; // Start y position for methods text
+        g2d.setColor(Color.BLACK);
+        int textY = y + 15;
         for (Property method : properties) {
             if (method.gettype().equals("Method")) {
-                g2d.drawString(method.getValue(), x_coordinate + 10, textY);
-                textY += 15; // Line spacing
+                g2d.drawString(method.getValue(), x + 10, textY);
+                textY += 15;
             }
         }
     }

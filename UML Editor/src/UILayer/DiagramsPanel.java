@@ -2,6 +2,8 @@ package UILayer;
 
 import Utilities.Diagram;
 import Utilities.Component;
+import Utilities.Observer;
+import Utilities.Project;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,12 +11,13 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DiagramsPanel extends JPanel {
+public class DiagramsPanel extends JPanel implements Observer {
     private ArrayList<Diagram> diagrams;
+    private Project project;
     private JPanel contentPanel;
     private ActionListener diagramDisplayAction;
     private ActionListener propertiesDisplayAction;
-    private HashMap<String, Boolean> expandedStates;
+    private final HashMap<String, Boolean> expandedStates;
 
     // Simplified color scheme
     private static final Color BACKGROUND = Color.WHITE;
@@ -69,8 +72,9 @@ public class DiagramsPanel extends JPanel {
         return scrollPane;
     }
 
-    public void displayDiagrams(ArrayList<Diagram> diagrams) {
-        this.diagrams = diagrams;
+    public void displayDiagrams(Project project) {
+        this.project = project;
+        this.diagrams = project.getDiagrams();
         contentPanel.removeAll();
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -133,7 +137,7 @@ public class DiagramsPanel extends JPanel {
         headerPanel.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 expandedStates.put(diagram.getName(), !expandedStates.get(diagram.getName()));
-                displayDiagrams(diagrams);
+                displayDiagrams(project);
                 if (diagramDisplayAction != null) {
                     diagramDisplayAction.actionPerformed(
                             new ActionEvent(diagram, ActionEvent.ACTION_PERFORMED, diagram.getName())
@@ -210,5 +214,10 @@ public class DiagramsPanel extends JPanel {
     public void addActionListeners(ActionListener diagramListener, ActionListener propertiesListener) {
         this.diagramDisplayAction = diagramListener;
         this.propertiesDisplayAction = propertiesListener;
+    }
+
+    @Override
+    public void update() {
+        displayDiagrams(project);
     }
 }
