@@ -23,7 +23,8 @@ public class CoordianteProperty extends Property {
     public void setValue(String value) throws IllegalArgumentException {
         try {
             validateInput(this.type, value);
-            this.value = value; // Assign if valid
+            this.value = value;
+            notifyObservers();// Assign if valid
         }
         catch (IllegalArgumentException e)
         {

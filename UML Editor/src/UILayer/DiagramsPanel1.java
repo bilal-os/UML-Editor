@@ -140,10 +140,8 @@ public class DiagramsPanel1 extends JPanel implements Observer {
 
     @Override
     public void update() {
-        SwingUtilities.invokeLater(this::displayDiagrams);
+        displayDiagrams();
     }
 
-    public Project getCurrentProject() {
-        return currentProject;
-    }
+
 }

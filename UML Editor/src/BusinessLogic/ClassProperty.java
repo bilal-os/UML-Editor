@@ -13,7 +13,8 @@ public class ClassProperty extends Property {
 
         try {
             validateInput(this.type, value);
-            this.value = value; // Assign if valid
+            this.value = value;
+            notifyObservers();// Assign if valid
         }
         catch (IllegalArgumentException e)
         {

@@ -6,9 +6,12 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import Utilities.Component;
 import Utilities.CustomMessageDialog;
+import Utilities.Observer;
 import Utilities.Property;
 
 public class PropertiesPanel extends JPanel {
@@ -24,7 +27,7 @@ public class PropertiesPanel extends JPanel {
     private JComboBox<String> propertyTypeComboBox;
     private JTextField valueTextField;
     private JButton addButton;
-
+    private List<PropertyRowData> propertyRows = new ArrayList<>();
 
     public PropertiesPanel() {
         setLayout(new BorderLayout(0, 10));
@@ -36,6 +39,9 @@ public class PropertiesPanel extends JPanel {
 
         setPreferredSize(new Dimension(450, 600));
         setBorder(createPanelBorder());
+
+        // Add ActionListener to addButton
+        addButton.addActionListener(e -> addNewProperty());
     }
 
     private CompoundBorder createPanelBorder() {
@@ -138,7 +144,7 @@ public class PropertiesPanel extends JPanel {
         valueTextField.setPreferredSize(new Dimension(200, 30));
 
         // Add button with modern styling
-        addButton = createStyledButton("Add Property");
+        addButton = createStyledButton();
 
         // Layout components
         gbc.gridx = 0;
@@ -174,14 +180,15 @@ public class PropertiesPanel extends JPanel {
         String selectedType = (String) propertyTypeComboBox.getSelectedItem();
         String value = valueTextField.getText().trim();
 
-        if (selectedType == null || value.isEmpty())
-        {
+        if (selectedType == null || value.isEmpty()) {
             CustomMessageDialog.showError(this, "Please select a type and enter a value.", "Input Error");
             return;
         }
 
         try {
             component.addProperty(selectedType, value);
+            PropertyRowData newRowData = new PropertyRowData(selectedType, value);
+            propertyRows.add(newRowData);
             tableModel.addRow(new Object[]{selectedType, value});
             valueTextField.setText("");
         } catch (IllegalArgumentException e) {
@@ -189,8 +196,8 @@ public class PropertiesPanel extends JPanel {
         }
     }
 
-    private JButton createStyledButton(String text) {
-        JButton button = new JButton(text);
+    private JButton createStyledButton() {
+        JButton button = new JButton("Add Property");
         button.setFont(new Font("Segoe UI", Font.BOLD, 12));
         button.setForeground(Color.WHITE);
         button.setBackground(PRIMARY_COLOR);
@@ -211,14 +218,33 @@ public class PropertiesPanel extends JPanel {
         return button;
     }
 
+    private void removeExistingObservers() {
+        // Check if there are existing property rows
+        if (propertyRows != null) {
+            // Iterate through existing property rows
+            for (PropertyRowData rowData : propertyRows) {
+                // If the row data has an original property (created from a Property), remove its observer
+                if (rowData.originalProperty != null) {
+                    rowData.originalProperty.removeObserver(rowData);
+                }
+            }
+        }
+    }
+
     public void displayProperties(Component component) {
+
+        removeExistingObservers();
+
         this.component = component;
         tableModel.setRowCount(0);
+        propertyRows.clear(); // Clear existing rows
 
         if (component != null) {
             ArrayList<Property> properties = component.getProperties();
             for (Property property : properties) {
-                tableModel.addRow(new Object[]{property.gettype(), property.getValue()});
+                PropertyRowData rowData = new PropertyRowData(property);
+                propertyRows.add(rowData);
+                tableModel.addRow(new Object[]{rowData.getType(), rowData.getValue()});
             }
 
             propertyTypeComboBox.removeAllItems();
@@ -238,8 +264,10 @@ public class PropertiesPanel extends JPanel {
             try {
                 int editingRow = propertiesTable.getEditingRow();
                 String newValue = (String) getCellEditorValue();
-                Property property = component.getProperties().get(editingRow);
-                property.setValue(newValue); // Validate new value
+
+                // Get the PropertyRowData for this row
+                PropertyRowData rowData = propertyRows.get(editingRow);
+                rowData.setValue(newValue); // This will validate the value
 
                 return super.stopCellEditing();
             } catch (IllegalArgumentException ex) {
@@ -249,6 +277,75 @@ public class PropertiesPanel extends JPanel {
         }
     }
 
+    // Inner class for property row data
+    private class PropertyRowData implements Observer {
+        private String type;
+        private String value;
+        private final Property originalProperty;
 
+        public PropertyRowData(Property property) {
+            this.type = property.gettype();
+            this.value = property.getValue();
+            this.originalProperty = property;
+            originalProperty.addObserver(this);
+        }
+
+        public PropertyRowData(String type, String value) {
+            this.type = type;
+            this.value = value;
+            this.originalProperty = null;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public void setValue(String value) {
+            // If we have an original property, update it
+            if (originalProperty != null) {
+                try {
+                    originalProperty.setValue(value);
+                } catch (IllegalArgumentException ex) {
+                    throw new IllegalArgumentException("Invalid value for property: " + ex.getMessage());
+                }
+            }
+            this.value = value;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            PropertyRowData that = (PropertyRowData) o;
+            return type.equals(that.type) &&
+                    value.equals(that.value);
+        }
+
+        @Override
+        public String toString() {
+            return "PropertyRowData{" +
+                    "type='" + type + '\'' +
+                    ", value='" + value + '\'' +
+                    '}';
+        }
+
+        @Override
+        public void update() {
+            value = originalProperty.getValue();
+
+            // Find the index of this property row in the table
+            int rowIndex = propertyRows.indexOf(this);
+
+            // Update the value in the table model
+            if (rowIndex != -1) {
+                tableModel.setValueAt(value, rowIndex, 1);
+            }
+        }
+
+    }
 
 }
