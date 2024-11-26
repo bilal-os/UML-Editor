@@ -18,10 +18,9 @@ public class MainWindowController {
 
     protected MenuBar menuBar;
     protected ComponentPalette componentPalette;
-    protected DiagramsPanel diagramsPanel;
+    protected DiagramsPanel1 diagramsPanel;
     protected PropertiesPanel propertiesPanel;
     protected Canvas canvas;
-
 
     public MainWindowController(MainWindow mainWindow, BusinessLogicInterface businessLogic) {
 
@@ -34,38 +33,27 @@ public class MainWindowController {
         this.propertiesPanel=mainWindow.getPropertiesPanel();
         this.canvas=mainWindow.getCanvas();
 
-
         initialize();
     }
 
     private void initialize() {
         menuBar.addActionListeners(new FileAction(), new EditAction(), new ViewAction(), new DiagramAction(), new HelpAction() );
-        diagramsPanel.addActionListeners(new DiagramDisplayAction(), new DisplayPropertiesAction());
-        componentPalette.addActionListeners(new DisplayPropertiesAction());
-        propertiesPanel.addActionListeners(new RenderDiagramsPanel());
+        diagramsPanel.addActionListeners(new componentPaletteListener(), new propertiesPanelListener());
+        componentPalette.addActionListeners(new propertiesPanelListener());
     }
 
     //ActionListener Classes for ComponentPalette
 
-    private class RenderDiagramsPanel implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            diagramsPanel.displayDiagrams(mainWindow.getProject().getDiagrams());
-        }
-    }
-
-    private class DisplayPropertiesAction implements ActionListener
-    {
+    private class propertiesPanelListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             Component component = (Component) actionEvent.getSource();
             propertiesPanel.displayProperties(component);
-            diagramsPanel.displayDiagrams(mainWindow.getProject().getDiagrams());
         }
     }
 
     //ActionListener Classes for DiagramPanels
-    private class DiagramDisplayAction implements ActionListener {
+    private class componentPaletteListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             Diagram diagram = (Diagram) e.getSource();
@@ -121,7 +109,7 @@ public class MainWindowController {
                     System.out.println("Creating class diagram...");
                     try {
                         businessLogic.createDiagram(mainWindow.getProject().getId(),"Class Diagram");
-                        diagramsPanel.displayDiagrams(mainWindow.getProject().getDiagrams());
+
                     } catch (Exception ex) {
                         CustomMessageDialog.showError(mainWindow,ex.getMessage(),"Error");
                     }

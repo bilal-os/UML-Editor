@@ -8,110 +8,201 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
+import java.util.List;
 
 public class DiagramPanel extends JPanel implements Observer {
     private Diagram diagram;
     private final HashMap<String, Boolean> expandedStates;
     private ActionListener componentPaletteListener;
     private ActionListener propertiesPanelListener;
-    public DiagramPanel(Diagram diagram,ActionListener componentPaletteListener, ActionListener propertiesPanelListener) {
-        this.diagram = diagram;
-        this.componentPaletteListener = componentPaletteListener;
-        this.propertiesPanelListener = propertiesPanelListener;
-        diagram.addObserver(this);
-        this.expandedStates = new HashMap<>();
-        initializeUI();
-    }
+
+    // UI Components
+    private JPanel headerPanel;
+    private JLabel arrowLabel;
+    private JLabel nameLabel;
+    private JLabel countLabel;
+    private JPanel componentsPanel;
+
     private static final Color HOVER = new Color(249, 250, 251);
     private static final Color BACKGROUND = Color.WHITE;
 
+    public DiagramPanel(Diagram diagram,
+                        ActionListener componentPaletteListener,
+                        ActionListener propertiesPanelListener) {
+        this.diagram = diagram;
+        this.componentPaletteListener = componentPaletteListener;
+        this.propertiesPanelListener = propertiesPanelListener;
+
+        // Ensure the diagram is observable
+        diagram.addObserver(this);
+
+        // Initialize expanded states
+        this.expandedStates = new HashMap<>();
+
+        // Default to false if not previously set
+        expandedStates.putIfAbsent(diagram.getName(), Boolean.FALSE);
+
+        // Initialize UI
+        initializeUI();
+    }
+
     private void initializeUI() {
+        // Reset the panel
+        removeAll();
+
+        // Setup base panel
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
+        setBackground(BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(4, 0, 4, 0));
 
-        // Header
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(Color.WHITE);
+        // Create header panel
+        createHeaderPanel();
+
+        // Add components panel if expanded
+        if (isExpanded()) {
+            createComponentsPanel();
+        }
+
+        // Ensure proper layout
+        revalidate();
+        repaint();
+    }
+
+    private void createHeaderPanel() {
+        // Header Panel
+        headerPanel = new JPanel(new BorderLayout());
+        headerPanel.setBackground(BACKGROUND);
         headerPanel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
 
-        JLabel arrowLabel = new JLabel(expandedStates.getOrDefault(diagram.getName(), false) ? "⌄" : "›");
+        // Arrow Label
+        arrowLabel = new JLabel(isExpanded() ? "⌄" : "›");
         arrowLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         arrowLabel.setForeground(Color.GRAY);
 
+        // Title Panel
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
-        titlePanel.setBackground(Color.WHITE);
+        titlePanel.setBackground(BACKGROUND);
 
-        JLabel nameLabel = new JLabel(diagram.getName());
+        // Name Label
+        nameLabel = new JLabel(diagram.getName());
         nameLabel.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         nameLabel.setForeground(Color.BLACK);
 
-        JLabel countLabel = new JLabel(String.valueOf(diagram.getComponents().size()));
+        // Count Label
+        countLabel = new JLabel(String.valueOf(diagram.getComponents().size()));
         countLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         countLabel.setForeground(Color.GRAY);
 
+        // Assemble title panel
         titlePanel.add(arrowLabel);
         titlePanel.add(nameLabel);
         titlePanel.add(countLabel);
 
         headerPanel.add(titlePanel, BorderLayout.CENTER);
 
-        // Click handling
+        // Add mouse listeners
+        addHeaderMouseListeners();
+
+        // Add header to panel
+        add(headerPanel, BorderLayout.NORTH);
+    }
+
+    private void addHeaderMouseListeners() {
         headerPanel.addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
-                // Toggle expanded state and update UI
-                boolean expanded = !expandedStates.getOrDefault(diagram.getName(), false);
-                expandedStates.put(diagram.getName(), expanded);
-                arrowLabel.setText(expanded ? "⌄" : "›");
-                revalidate();  // Ensure layout updates
-                repaint();
-                if (componentPaletteListener != null) {
-                    componentPaletteListener.actionPerformed(
-                            new ActionEvent(diagram, ActionEvent.ACTION_PERFORMED, diagram.getName())
-                    );
-                }
+                // Toggle expanded state
+                toggleExpansion();
             }
+
+            @Override
             public void mouseEntered(MouseEvent e) {
                 headerPanel.setBackground(HOVER);
-                titlePanel.setBackground(HOVER);
             }
 
+            @Override
             public void mouseExited(MouseEvent e) {
                 headerPanel.setBackground(BACKGROUND);
-                titlePanel.setBackground(BACKGROUND);
             }
         });
+    }
 
-        add(headerPanel, BorderLayout.NORTH);
+    private void toggleExpansion() {
+        // Toggle expanded state
+        boolean currentState = isExpanded();
+        boolean newState = !currentState;
 
-        // Components section (initially hidden or shown based on expanded state)
-        if (expandedStates.getOrDefault(diagram.getName(), false)) {
-            JPanel componentsPanel = new JPanel();
-            componentsPanel.setLayout(new BoxLayout(componentsPanel, BoxLayout.Y_AXIS));
-            componentsPanel.setBackground(Color.WHITE);
-            componentsPanel.setBorder(BorderFactory.createEmptyBorder(4, 28, 4, 4));
+        // Update expanded state
+        expandedStates.put(diagram.getName(), newState);
 
-            for (Component component : diagram.getComponents()) {
-                componentsPanel.add(new ComponentPanel(component,propertiesPanelListener));
-                componentsPanel.add(Box.createVerticalStrut(4));
+        // Update arrow label
+        arrowLabel.setText(newState ? "⌄" : "›");
+
+        // Recreate UI based on new state
+        if (newState) {
+            createComponentsPanel();
+        } else {
+            // Remove components panel if it exists
+            if (getComponentCount() > 1) {
+                remove(1);
             }
-
-            add(componentsPanel, BorderLayout.CENTER);
         }
+
+        // Trigger listener if set
+        if (componentPaletteListener != null) {
+            componentPaletteListener.actionPerformed(
+                    new ActionEvent(diagram, ActionEvent.ACTION_PERFORMED, diagram.getName())
+            );
+        }
+
+        // Refresh UI
+        revalidate();
+        repaint();
+    }
+
+    private void createComponentsPanel() {
+        // Create components panel
+        componentsPanel = new JPanel();
+        componentsPanel.setLayout(new BoxLayout(componentsPanel, BoxLayout.Y_AXIS));
+        componentsPanel.setBackground(BACKGROUND);
+        componentsPanel.setBorder(BorderFactory.createEmptyBorder(4, 28, 4, 4));
+
+        // Add components
+        List<Component> components = diagram.getComponents();
+        for (Component component : components) {
+            componentsPanel.add(new ComponentPanel(component, propertiesPanelListener));
+            componentsPanel.add(Box.createVerticalStrut(4));
+        }
+
+        // Add to panel
+        add(componentsPanel, BorderLayout.CENTER);
+    }
+
+    private boolean isExpanded() {
+        return expandedStates.getOrDefault(diagram.getName(), false);
     }
 
     @Override
     public void update() {
-        // Dynamically add the latest component from the diagram
-        addComponent(diagram.getComponents().getLast());
+        // Safely update the UI
+        SwingUtilities.invokeLater(() -> {
+            // Update component count
+            countLabel.setText(String.valueOf(diagram.getComponents().size()));
+
+            // Only add component if panel is expanded
+            if (isExpanded() && !diagram.getComponents().isEmpty()) {
+                addComponent(diagram.getComponents().get(diagram.getComponents().size() - 1));
+            }
+        });
     }
 
     private void addComponent(Component component) {
-        // Dynamically add a component to the panel
-        JPanel componentsPanel = (JPanel) getComponent(1);  // Access the components panel (if visible)
+        // Safely add a new component to the panel
         if (componentsPanel != null) {
-            componentsPanel.add(new ComponentPanel(component,propertiesPanelListener));
+            componentsPanel.add(new ComponentPanel(component, propertiesPanelListener));
             componentsPanel.add(Box.createVerticalStrut(4));
+
+            // Refresh UI
             revalidate();
             repaint();
         }

@@ -13,6 +13,7 @@ public abstract class Property implements Subject{
             validateInput(type, value);
             this.type = type;
             this.value = value;
+            observers = new ArrayList<>();
         }
        catch (IllegalArgumentException e)
        {

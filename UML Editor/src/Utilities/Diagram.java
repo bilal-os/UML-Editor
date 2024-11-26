@@ -14,6 +14,7 @@ public abstract class Diagram implements Subject{
         this.name = name;
         components = new ArrayList<Component>();
         componentNames = new ArrayList<String>();
+        observers = new ArrayList<>();
 
     }
 

@@ -5,53 +5,80 @@ import Utilities.Observer;
 import Utilities.Project;
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class DiagramsPanel1 extends JPanel implements Observer {
+    // Core data structures
     private ArrayList<Diagram> diagrams;
-    private JPanel contentPanel;
-    private ActionListener componentPaletteListener;
-    private ActionListener propertiesPanelListener;
-    private final HashMap<String, Boolean> expandedStates;
     private Project currentProject;
 
+    // UI Components
+    private JPanel contentPanel;
+    private JScrollPane scrollPane;
+
+    // Action Listeners
+    private ActionListener componentPaletteListener;
+    private ActionListener propertiesPanelListener;
+
+    // Colors and Styling
+    private static final Color BACKGROUND_COLOR = new Color(248, 249, 250);
+    private static final Color TITLE_COLOR = new Color(52, 58, 64);
+    private static final Color BORDER_COLOR = new Color(222, 226, 230);
+    private static final Color DIAGRAM_HOVER_COLOR = new Color(233, 236, 239);
+
     public DiagramsPanel1(Project currentProject) {
-        this.diagrams = new ArrayList<>();
         this.currentProject = currentProject;
-        diagrams = currentProject.getDiagrams();
+        this.diagrams = new ArrayList<>(currentProject.getDiagrams());
+
         currentProject.addObserver(this);
-        expandedStates = new HashMap<>();
-        initializeUI();
+
+        initializeModernUI();
         displayDiagrams();
     }
 
-    private void initializeUI() {
+    private void initializeModernUI() {
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
+        setBackground(BACKGROUND_COLOR);
 
-        JPanel titlePanel = createTitlePanel();
+        // Modern title panel
+        JPanel titlePanel = createModernTitlePanel();
+
+        // Content panel with more modern styling
         contentPanel = new JPanel(new GridBagLayout());
-        contentPanel.setBackground(Color.WHITE);
+        contentPanel.setBackground(BACKGROUND_COLOR);
+        contentPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
-        JScrollPane scrollPane = new JScrollPane(contentPanel);
-        scrollPane.setBorder(null);
+        // Scroll pane with subtle border
+        scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setBorder(new CompoundBorder(
+                BorderFactory.createMatteBorder(1, 0, 0, 0, BORDER_COLOR),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16); // Smoother scrolling
 
         add(titlePanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
-        setPreferredSize(new Dimension(280, 600));
+        setPreferredSize(new Dimension(320, 650));
     }
 
-    private JPanel createTitlePanel() {
+    private JPanel createModernTitlePanel() {
         JPanel titlePanel = new JPanel(new BorderLayout());
-        titlePanel.setBackground(Color.WHITE);
-        titlePanel.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.LIGHT_GRAY));
+        titlePanel.setBackground(BACKGROUND_COLOR);
+        titlePanel.setBorder(new CompoundBorder(
+                BorderFactory.createMatteBorder(0, 0, 1, 0, BORDER_COLOR),
+                new EmptyBorder(12, 15, 12, 15)
+        ));
 
-        JLabel titleLabel = new JLabel("Diagrams");
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        JLabel titleLabel = new JLabel("Project Diagrams");
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        titleLabel.setForeground(TITLE_COLOR);
 
         titlePanel.add(titleLabel, BorderLayout.WEST);
         return titlePanel;
@@ -59,18 +86,39 @@ public class DiagramsPanel1 extends JPanel implements Observer {
 
     public void displayDiagrams() {
         contentPanel.removeAll();
+
+        diagrams = currentProject.getDiagrams();
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(4, 12, 0, 12);
+        gbc.weightx = 1.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 0, 5, 0);
 
         for (Diagram diagram : diagrams) {
-            DiagramPanel diagramPanel = new DiagramPanel(diagram,componentPaletteListener,propertiesPanelListener);
+            DiagramPanel diagramPanel = new DiagramPanel(
+                    diagram,
+                    componentPaletteListener,
+                    propertiesPanelListener
+            );
 
-            // Check if the diagram is expanded or collapsed
-            boolean isExpanded = expandedStates.getOrDefault(diagram.getName(), false);
-            diagramPanel.setVisible(isExpanded);
+            // Add hover and modern styling to diagram panels
+            diagramPanel.setBackground(Color.WHITE);
+            diagramPanel.setBorder(new CompoundBorder(
+                    new LineBorder(BORDER_COLOR, 1, true),
+                    new EmptyBorder(10, 15, 10, 15)
+            ));
+
+            // Add hover effect
+            diagramPanel.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    diagramPanel.setBackground(DIAGRAM_HOVER_COLOR);
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    diagramPanel.setBackground(Color.WHITE);
+                }
+            });
 
             contentPanel.add(diagramPanel, gbc);
             gbc.gridy++;
@@ -80,19 +128,22 @@ public class DiagramsPanel1 extends JPanel implements Observer {
         contentPanel.repaint();
     }
 
-    public void addActionListeners(ActionListener componentPaletteListener, ActionListener propertiesPanelListener) {
+    // Remaining methods stay the same as in previous implementation
+    public void addActionListeners(
+            ActionListener componentPaletteListener,
+            ActionListener propertiesPanelListener
+    ) {
         this.componentPaletteListener = componentPaletteListener;
         this.propertiesPanelListener = propertiesPanelListener;
-    }
-
-    public void addDiagram(Diagram diagram) {
-        // You can add a new diagram to the list and refresh
-        diagrams.add(diagram);
         displayDiagrams();
     }
 
     @Override
     public void update() {
-        addDiagram(currentProject.getDiagrams().getLast());
+        SwingUtilities.invokeLater(this::displayDiagrams);
+    }
+
+    public Project getCurrentProject() {
+        return currentProject;
     }
 }

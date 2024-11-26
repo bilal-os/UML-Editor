@@ -10,6 +10,7 @@ public class Project implements Subject{
 
     public Project(int id, String name) {
         diagrams = new ArrayList<>();
+        observers = new ArrayList<>();
         this.id = id;
         this.name = name;
     }

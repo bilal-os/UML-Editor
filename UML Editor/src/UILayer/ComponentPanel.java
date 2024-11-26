@@ -8,53 +8,136 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class ComponentPanel extends JPanel implements Observer {
+    // Component and UI state
     private Component component;
     private JLabel nameLabel;
-    ActionListener propertiesPanelListener;
-    public ComponentPanel(Component component,ActionListener propertiesPanelListener) {
+    private ActionListener propertiesPanelListener;
+
+    // Consistent color scheme
+    private static final Color DEFAULT_BACKGROUND = Color.WHITE;
+    private static final Color HOVER_BACKGROUND = Color.LIGHT_GRAY;
+    private static final Color DEFAULT_TEXT_COLOR = Color.BLACK;
+
+    /**
+     * Constructor for ComponentPanel
+     * @param component The component to display
+     * @param propertiesPanelListener Listener for properties panel actions
+     */
+    public ComponentPanel(Component component, ActionListener propertiesPanelListener) {
+        // Validate inputs
+        if (component == null) {
+            throw new IllegalArgumentException("Component cannot be null");
+        }
+
+        // Initialize core data
         this.component = component;
         this.propertiesPanelListener = propertiesPanelListener;
-        component.getNameProperty().addObserver(this);
+
+        // Register as an observer to the component's name property
+        if (component.getNameProperty() != null) {
+            component.getNameProperty().addObserver(this);
+        }
+
+        // Setup UI
+        initializeUI();
+    }
+
+    /**
+     * Initialize the user interface for the component panel
+     */
+    private void initializeUI() {
+        // Set layout and styling
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
+        setBackground(DEFAULT_BACKGROUND);
         setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
 
-        nameLabel = new JLabel(component.getName() != null ? component.getName() : component.getClass().getSimpleName());
+        // Create name label
+        createNameLabel();
+
+        // Add mouse listeners for interaction
+        addInteractionListeners();
+    }
+
+    /**
+     * Create and configure the name label
+     */
+    private void createNameLabel() {
+        // Determine the label text
+        String displayName = component.getName() != null
+                ? component.getName()
+                : (component.getClass().getSimpleName() != null
+                ? component.getClass().getSimpleName()
+                : "Unnamed Component");
+
+        // Create and style label
+        nameLabel = new JLabel(displayName);
         nameLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
-        nameLabel.setForeground(Color.BLACK);
+        nameLabel.setForeground(DEFAULT_TEXT_COLOR);
 
+        // Add to panel
         add(nameLabel, BorderLayout.CENTER);
+    }
 
-        // Event handling for mouse interactions
+    /**
+     * Add mouse listeners for panel interactions
+     */
+    private void addInteractionListeners() {
         addMouseListener(new MouseAdapter() {
+            @Override
             public void mousePressed(MouseEvent e) {
-                // Handle the mouse press, e.g., open properties or modify the component
-                System.out.println("Component clicked: " + component.getName());
-                if (propertiesPanelListener != null) {
-                    propertiesPanelListener.actionPerformed(
-                            new ActionEvent(component, ActionEvent.ACTION_PERFORMED, "showProperties")
-                    );
-                }
+                handleComponentClick(e);
             }
 
+            @Override
             public void mouseEntered(MouseEvent e) {
-                setBackground(Color.LIGHT_GRAY);
+                setBackground(HOVER_BACKGROUND);
             }
 
+            @Override
             public void mouseExited(MouseEvent e) {
-                setBackground(Color.WHITE);
+                setBackground(DEFAULT_BACKGROUND);
             }
         });
     }
 
-    private void changeComponentName(String name) {
-        if (name != null && !name.equals(nameLabel.getText())) {
-            nameLabel.setText(name); // Update the displayed name when the component's name changes
+    /**
+     * Handle component click event
+     * @param e MouseEvent triggering the click
+     */
+    private void handleComponentClick(MouseEvent e) {
+        // Log component click (can be removed in production)
+        System.out.println("Component clicked: " +
+                (component.getName() != null ? component.getName() : component.getClass().getSimpleName()));
+
+        // Trigger properties panel if listener is set
+        if (propertiesPanelListener != null) {
+            propertiesPanelListener.actionPerformed(
+                    new ActionEvent(component, ActionEvent.ACTION_PERFORMED, "showProperties")
+            );
         }
     }
 
+    /**
+     * Update the component name when notified
+     */
     @Override
     public void update() {
-        changeComponentName(component.getName()); // Update name when notified by the observer
+        // Ensure UI updates happen on the Event Dispatch Thread
+        SwingUtilities.invokeLater(() -> {
+            String newName = component.getName();
+            if (newName != null && !newName.equals(nameLabel.getText())) {
+                nameLabel.setText(newName);
+                revalidate();
+                repaint();
+            }
+        });
+    }
+
+    /**
+     * Get the underlying component
+     * @return The component associated with this panel
+     */
+    public Component getComponent() {
+        return component;
     }
 }

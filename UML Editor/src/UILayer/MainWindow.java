@@ -15,7 +15,7 @@ public class MainWindow extends JFrame {
     private Canvas canvas;
     private PropertiesPanel propertiesPanel;
     private ComponentPalette componentPalette;
-    private DiagramsPanel diagramsPanel;
+    private DiagramsPanel1 diagramsPanel;
     private JPanel workspacePanel;
     private JPanel sidePanel;
 
@@ -70,7 +70,7 @@ public class MainWindow extends JFrame {
         return componentPalette;
     }
 
-    public DiagramsPanel getDiagramsPanel()
+    public DiagramsPanel1 getDiagramsPanel()
     {
         return diagramsPanel;
     }
@@ -106,7 +106,7 @@ public class MainWindow extends JFrame {
         // Initialize core components
         propertiesPanel = new PropertiesPanel();
         componentPalette = new ComponentPalette();
-        diagramsPanel = new DiagramsPanel();
+        diagramsPanel = new DiagramsPanel1(project);
         canvas = new Canvas();
 
         // Set up side panel

@@ -18,6 +18,7 @@ public abstract class Component {
         y_coordinate = new CoordianteProperty("Y Coordinate",50);
         properties = new ArrayList<>();
         propertiesTypes = new ArrayList<>();
+        observers = new ArrayList<>();
         properties.add(x_coordinate);
         properties.add(y_coordinate);
         propertiesTypes.add("X Coordinate");

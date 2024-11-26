@@ -2,12 +2,9 @@ package UILayer;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import Utilities.Component;
@@ -28,7 +25,6 @@ public class PropertiesPanel extends JPanel {
     private JTextField valueTextField;
     private JButton addButton;
 
-    private ActionListener actionListener;
 
     public PropertiesPanel() {
         setLayout(new BorderLayout(0, 10));
@@ -143,7 +139,6 @@ public class PropertiesPanel extends JPanel {
 
         // Add button with modern styling
         addButton = createStyledButton("Add Property");
-        addButton.addActionListener(e -> addNewProperty());
 
         // Layout components
         gbc.gridx = 0;
@@ -245,10 +240,7 @@ public class PropertiesPanel extends JPanel {
                 String newValue = (String) getCellEditorValue();
                 Property property = component.getProperties().get(editingRow);
                 property.setValue(newValue); // Validate new value
-                if(property.gettype().contains("Name"))
-                {
-                    actionListener.actionPerformed(null);
-                }
+
                 return super.stopCellEditing();
             } catch (IllegalArgumentException ex) {
                 CustomMessageDialog.showError(propertiesTable, ex.getLocalizedMessage(), "Validation Error");
@@ -257,9 +249,6 @@ public class PropertiesPanel extends JPanel {
         }
     }
 
-    public void addActionListeners(ActionListener actionListener)
-    {
-        this.actionListener=actionListener;
-    }
+
 
 }
