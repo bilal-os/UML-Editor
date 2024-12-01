@@ -5,7 +5,7 @@ import BusinessLogic.CoordianteProperty;
 import java.awt.*;
 import java.util.ArrayList;
 
-public abstract class Component {
+public abstract class Component implements Subject{
 
     protected ArrayList<Property> properties;
     protected ArrayList<String> propertiesTypes;
@@ -23,6 +23,20 @@ public abstract class Component {
         properties.add(y_coordinate);
         propertiesTypes.add("X Coordinate");
         propertiesTypes.add("Y Coordinate");
+    }
+
+    public void addObserver(Observer observer){
+        observers.add(observer);
+    }
+
+    public void removeObserver(Observer observer){
+        observers.remove(observer);
+    }
+
+    public void notifyObservers(){
+        for(Observer observer : observers){
+            observer.update();
+        }
     }
 
     public String getName() {
@@ -47,7 +61,14 @@ public abstract class Component {
         return propertiesTypes;
     }
 
-    public abstract void addProperty(String type, String value) throws IllegalArgumentException;
+    public abstract void createProperty(String type, String value) throws IllegalArgumentException ;
+
+    public void addProperty(String type, String value) throws IllegalArgumentException
+    {
+        createProperty(type, value);
+        notifyObservers();
+    }
+
 
     public ArrayList<Property> getProperties() {
         return properties;
@@ -55,6 +76,7 @@ public abstract class Component {
 
     public void removeProperty(Property property) {
         properties.remove(property);
+        notifyObservers();
     }
 
     public abstract void renderComponent(Graphics g);

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Diagram implements Subject{
-    protected List<Component> components;
+    protected ArrayList<Component> components;
     protected List<String> componentNames;
     private ArrayList<Observer> observers;
     protected String name;
@@ -22,7 +22,7 @@ public abstract class Diagram implements Subject{
         return componentNames;
     }
 
-    public List<Component> getComponents()
+    public ArrayList<Component> getComponents()
     {
         return components;
     }

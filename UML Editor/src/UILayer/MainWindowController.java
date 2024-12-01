@@ -40,6 +40,7 @@ public class MainWindowController {
         menuBar.addActionListeners(new FileAction(), new EditAction(), new ViewAction(), new DiagramAction(), new HelpAction() );
         diagramsPanel.addActionListeners(new componentPaletteListener(), new propertiesPanelListener());
         componentPalette.addActionListeners(new propertiesPanelListener());
+        canvas.addActionListeners(new propertiesPanelListener());
     }
 
     //ActionListener Classes for ComponentPalette

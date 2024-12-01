@@ -2,12 +2,14 @@ package UILayer;
 
 import Utilities.Diagram;
 import Utilities.Component;
+import Utilities.Observer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
-public class Canvas extends JPanel {
+public class Canvas extends JPanel implements Observer {
     private float zoomLevel = 1.0f;
     private static final int GRID_SIZE = 20;
     private static final Color GRID_COLOR = new Color(240, 240, 240);
@@ -16,7 +18,14 @@ public class Canvas extends JPanel {
     private Point dragStart = null;
     private Component selectedComponent = null;
 
+    private ActionListener propertiesPanelListener;
+
+    private ArrayList<Component> components;
+
     public Canvas() {
+
+        components = new ArrayList<>();
+
         setBackground(Color.WHITE);
         setPreferredSize(new Dimension(800, 600));
 
@@ -26,6 +35,7 @@ public class Canvas extends JPanel {
                 // Check if a component is clicked
                 selectedComponent = findDiagramComponentAt((e.getPoint()));
                 if (selectedComponent != null) {
+                    propertiesPanelListener.actionPerformed(new ActionEvent(selectedComponent, ActionEvent.ACTION_PERFORMED, "showProperties"));
                     dragStart = e.getPoint();
                 }
             }
@@ -59,6 +69,9 @@ public class Canvas extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
+
+
+
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g;
 
@@ -118,7 +131,42 @@ public class Canvas extends JPanel {
     }
 
     public void setDiagram(Diagram diagram) {
+       if(this.diagram != null) {
+           this.diagram.removeObserver(this);
+
+           for(Component component: diagram.getComponents())
+           {
+               component.removeObserver(this);
+           }
+
+
+       }
+
         this.diagram = diagram;
+        this.diagram.addObserver(this);
+
+        for(Component component: diagram.getComponents())
+        {
+            component.addObserver(this);
+        }
+
+        this.components=this.diagram.getComponents();
+
         repaint();
+    }
+
+    public void addActionListeners(ActionListener propertiesPanelListener) {
+        this.propertiesPanelListener = propertiesPanelListener;
+    }
+
+    @Override
+    public void update() {
+        repaint();
+        if(components.size()<diagram.getComponents().size())
+        {
+            components.add(diagram.getComponents().getLast());
+            components.getLast().addObserver(this);
+        }
+
     }
 }

@@ -17,7 +17,7 @@ public class Interface extends Component {
     }
 
     @Override
-    public void addProperty(String type, String value) throws IllegalArgumentException {
+    public void createProperty(String type, String value) throws IllegalArgumentException {
         if (!propertiesTypes.contains(type)) {
             throw new IllegalArgumentException("Invalid property type for Interface: " + type);
         }
