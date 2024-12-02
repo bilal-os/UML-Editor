@@ -2,8 +2,8 @@ package UILayer;
 
 import Utilities.Diagram;
 import Utilities.Component;
-import Utilities.Observer;
 import Utilities.Project;
+import Utilities.ProjectObserver;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +11,7 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class DiagramsPanel extends JPanel implements Observer {
+public class DiagramsPanel extends JPanel implements ProjectObserver {
     private ArrayList<Diagram> diagrams;
     private Project project;
     private JPanel contentPanel;
@@ -216,8 +216,13 @@ public class DiagramsPanel extends JPanel implements Observer {
         this.propertiesDisplayAction = propertiesListener;
     }
 
-    @Override
+
     public void update() {
         displayDiagrams(project);
+    }
+
+    @Override
+    public void updateFromProject() {
+
     }
 }

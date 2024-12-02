@@ -4,10 +4,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Diagram implements Subject{
+public abstract class Diagram {
     protected ArrayList<Component> components;
     protected List<String> componentNames;
-    private ArrayList<Observer> observers;
+    private ArrayList<DiagramObserver> observers;
     protected String name;
 
     public Diagram(String name) {
@@ -32,6 +32,7 @@ public abstract class Diagram implements Subject{
     public Component addComponent(String componentName)
     {
         Component component = createComponent(componentName);
+        
         notifyObservers();
         return component;
     }
@@ -48,20 +49,20 @@ public abstract class Diagram implements Subject{
         }
     }
 
-    @Override
-    public void addObserver(Observer observer) {
+
+    public void addObserver(DiagramObserver observer) {
         observers.add(observer);
     }
 
-    @Override
-    public void removeObserver(Observer observer) {
+
+    public void removeObserver(DiagramObserver observer) {
         observers.remove(observer);
     }
 
-    @Override
+
     public void notifyObservers() {
-        for (Observer observer : observers) {
-            observer.update();
+        for (DiagramObserver observer : observers) {
+            observer.updateFromDiagram();
         }
     }
 

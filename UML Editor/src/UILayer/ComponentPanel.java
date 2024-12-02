@@ -1,13 +1,14 @@
 package UILayer;
 
 import Utilities.Component;
-import Utilities.Observer;
+import Utilities.ComponentObserver;
+import Utilities.PropertyObserver;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class ComponentPanel extends JPanel implements Observer {
+public class ComponentPanel extends JPanel implements PropertyObserver {
     // Component and UI state
     private Component component;
     private JLabel nameLabel;
@@ -65,9 +66,7 @@ public class ComponentPanel extends JPanel implements Observer {
         // Determine the label text
         String displayName = component.getName() != null
                 ? component.getName()
-                : (component.getClass().getSimpleName() != null
-                ? component.getClass().getSimpleName()
-                : "Unnamed Component");
+                : component.getClass().getSimpleName();
 
         // Create and style label
         nameLabel = new JLabel(displayName);
@@ -121,16 +120,8 @@ public class ComponentPanel extends JPanel implements Observer {
      * Update the component name when notified
      */
     @Override
-    public void update() {
-        // Ensure UI updates happen on the Event Dispatch Thread
-        SwingUtilities.invokeLater(() -> {
-            String newName = component.getName();
-            if (newName != null && !newName.equals(nameLabel.getText())) {
-                nameLabel.setText(newName);
-                revalidate();
-                repaint();
-            }
-        });
+    public void updateFromProperty() {
+        nameLabel.setText(component.getName());
     }
 
     /**

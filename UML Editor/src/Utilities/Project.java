@@ -2,11 +2,11 @@ package Utilities;
 
 import java.util.ArrayList;
 
-public class Project implements Subject{
+public class Project {
     ArrayList<Diagram> diagrams;
     int id;
     String name;
-    ArrayList<Observer> observers;
+    ArrayList<ProjectObserver> observers;
 
     public Project(int id, String name) {
         diagrams = new ArrayList<>();
@@ -44,20 +44,20 @@ public class Project implements Subject{
         this.name = name;
     }
 
-    @Override
-    public void addObserver(Observer observer) {
+
+    public void addObserver(ProjectObserver observer) {
             observers.add(observer);
     }
 
-    @Override
-    public void removeObserver(Observer observer) {
+
+    public void removeObserver(ProjectObserver observer) {
         observers.remove(observer);
     }
 
-    @Override
+
     public void notifyObservers() {
-        for (Observer observer : observers) {
-            observer.update();
+        for (ProjectObserver observer : observers) {
+            observer.updateFromProject();
         }
     }
 }

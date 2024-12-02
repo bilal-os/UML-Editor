@@ -20,7 +20,7 @@ public class CoordianteProperty extends Property {
     }
 
     @Override
-    public void setValue(String value) throws IllegalArgumentException {
+    public void addValue(String value) throws IllegalArgumentException {
         try {
             validateInput(this.type, value);
             this.value = value;

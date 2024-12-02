@@ -7,12 +7,11 @@ import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import Utilities.Component;
 import Utilities.CustomMessageDialog;
-import Utilities.Observer;
 import Utilities.Property;
+import Utilities.PropertyObserver;
 
 public class PropertiesPanel extends JPanel {
     private static final Color PRIMARY_COLOR = new Color(51, 153, 255);
@@ -278,7 +277,7 @@ public class PropertiesPanel extends JPanel {
     }
 
     // Inner class for property row data
-    private class PropertyRowData implements Observer {
+    private class PropertyRowData implements PropertyObserver {
         private String type;
         private String value;
         private final Property originalProperty;
@@ -334,7 +333,7 @@ public class PropertiesPanel extends JPanel {
         }
 
         @Override
-        public void update() {
+        public void updateFromProperty() {
             value = originalProperty.getValue();
 
             // Find the index of this property row in the table

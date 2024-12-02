@@ -5,13 +5,13 @@ import BusinessLogic.CoordianteProperty;
 import java.awt.*;
 import java.util.ArrayList;
 
-public abstract class Component implements Subject{
+public abstract class Component {
 
     protected ArrayList<Property> properties;
     protected ArrayList<String> propertiesTypes;
     protected CoordianteProperty x_coordinate;
     protected CoordianteProperty y_coordinate;
-    protected ArrayList<Observer> observers;
+    protected ArrayList<ComponentObserver> observers;
 
     public Component() {
         x_coordinate = new CoordianteProperty("X Coordinate",50);
@@ -25,17 +25,17 @@ public abstract class Component implements Subject{
         propertiesTypes.add("Y Coordinate");
     }
 
-    public void addObserver(Observer observer){
+    public void addObserver(ComponentObserver observer){
         observers.add(observer);
     }
 
-    public void removeObserver(Observer observer){
+    public void removeObserver(ComponentObserver observer){
         observers.remove(observer);
     }
 
     public void notifyObservers(){
-        for(Observer observer : observers){
-            observer.update();
+        for(ComponentObserver observer : observers){
+            observer.updateFromComponent();
         }
     }
 

@@ -9,12 +9,11 @@ public class ClassProperty extends Property {
     }
 
     @Override
-    public void setValue(String value) throws IllegalArgumentException {
+    public void addValue(String value) throws IllegalArgumentException {
 
         try {
             validateInput(this.type, value);
             this.value = value;
-            notifyObservers();// Assign if valid
         }
         catch (IllegalArgumentException e)
         {

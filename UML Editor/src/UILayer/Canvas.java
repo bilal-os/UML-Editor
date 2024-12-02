@@ -1,105 +1,129 @@
 package UILayer;
 
-import Utilities.Diagram;
+import Utilities.*;
 import Utilities.Component;
-import Utilities.Observer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class Canvas extends JPanel implements Observer {
+public class Canvas extends JPanel implements DiagramObserver, ComponentObserver, PropertyObserver {
     private float zoomLevel = 1.0f;
     private static final int GRID_SIZE = 20;
     private static final Color GRID_COLOR = new Color(240, 240, 240);
-    private Diagram diagram; // Diagram object to manage components
 
+    private Diagram diagram;
     private Point dragStart = null;
     private Component selectedComponent = null;
-
     private ActionListener propertiesPanelListener;
 
-    private ArrayList<Component> components;
 
     public Canvas() {
+        initializeCanvas();
+        addEventListeners();
+    }
 
-        components = new ArrayList<>();
-
+    private void initializeCanvas() {
         setBackground(Color.WHITE);
         setPreferredSize(new Dimension(800, 600));
+    }
 
-        addMouseListener(new MouseAdapter() {
+    private void addEventListeners() {
+        addMouseListener(createMouseAdapter());
+        addMouseMotionListener(createMouseMotionAdapter());
+    }
+
+    private MouseAdapter createMouseAdapter() {
+        return new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                // Check if a component is clicked
-                selectedComponent = findDiagramComponentAt((e.getPoint()));
-                if (selectedComponent != null) {
-                    propertiesPanelListener.actionPerformed(new ActionEvent(selectedComponent, ActionEvent.ACTION_PERFORMED, "showProperties"));
-                    dragStart = e.getPoint();
-                }
+                handleMousePressed(e);
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 dragStart = null;
             }
-        });
+        };
+    }
 
-        addMouseMotionListener(new MouseMotionAdapter() {
+    private MouseMotionAdapter createMouseMotionAdapter() {
+        return new MouseMotionAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (selectedComponent != null && dragStart != null) {
-                    int dx = (int) ((e.getX() - dragStart.x) / zoomLevel);
-                    int dy = (int) ((e.getY() - dragStart.y) / zoomLevel);
-
-                    // Update component's position
-                    int newX = Integer.parseInt(selectedComponent.getProperties().get(0).getValue()) + dx;
-                    int newY = Integer.parseInt(selectedComponent.getProperties().get(1).getValue()) + dy;
-
-                    selectedComponent.getProperties().get(0).setValue(String.valueOf(newX));
-                    selectedComponent.getProperties().get(1).setValue(String.valueOf(newY));
-
-                    dragStart = e.getPoint();
-                    repaint();
-                }
+                handleMouseDragged(e);
             }
-        });
+        };
+    }
+
+    private void handleMousePressed(MouseEvent e) {
+        selectedComponent = findDiagramComponentAt(e.getPoint());
+        if (selectedComponent != null) {
+            notifyPropertiesPanel(selectedComponent);
+            dragStart = e.getPoint();
+        }
+    }
+
+    private void handleMouseDragged(MouseEvent e) {
+        if (selectedComponent != null && dragStart != null) {
+            updateComponentPosition(e);
+            dragStart = e.getPoint();
+            repaint();
+        }
+    }
+
+    private void notifyPropertiesPanel(Component component) {
+        if (propertiesPanelListener != null) {
+            propertiesPanelListener.actionPerformed(
+                    new ActionEvent(component, ActionEvent.ACTION_PERFORMED, "showProperties")
+            );
+        }
+    }
+
+    private void updateComponentPosition(MouseEvent e) {
+        int dx = (int) ((e.getX() - dragStart.x) / zoomLevel);
+        int dy = (int) ((e.getY() - dragStart.y) / zoomLevel);
+
+        int newX = Integer.parseInt(selectedComponent.getProperties().get(0).getValue()) + dx;
+        int newY = Integer.parseInt(selectedComponent.getProperties().get(1).getValue()) + dy;
+
+        selectedComponent.getProperties().get(0).setValue(String.valueOf(newX));
+        selectedComponent.getProperties().get(1).setValue(String.valueOf(newY));
     }
 
     @Override
     protected void paintComponent(Graphics g) {
-
-
-
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D) g;
+        renderCanvas((Graphics2D) g);
+    }
 
-        // Enable antialiasing
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        // Apply zoom
-        g2d.scale(zoomLevel, zoomLevel);
-
-        // Draw grid
+    private void renderCanvas(Graphics2D g2d) {
+        enableAntialiasing(g2d);
+        applyZoom(g2d);
         drawGrid(g2d);
 
-        // Render diagram and its components
         if (diagram != null) {
             diagram.renderDiagram(g2d);
         }
     }
 
-    private void drawGrid(Graphics2D g2d) {
-        int width = getWidth();
-        int height = getHeight();
+    private void enableAntialiasing(Graphics2D g2d) {
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+    }
 
+    private void applyZoom(Graphics2D g2d) {
+        g2d.scale(zoomLevel, zoomLevel);
+    }
+
+    private void drawGrid(Graphics2D g2d) {
         g2d.setColor(GRID_COLOR);
-        for (int x = 0; x < width; x += GRID_SIZE) {
-            g2d.drawLine(x, 0, x, height);
+
+        for (int x = 0; x < getWidth(); x += GRID_SIZE) {
+            g2d.drawLine(x, 0, x, getHeight());
         }
-        for (int y = 0; y < height; y += GRID_SIZE) {
-            g2d.drawLine(0, y, width, y);
+        for (int y = 0; y < getHeight(); y += GRID_SIZE) {
+            g2d.drawLine(0, y, getWidth(), y);
         }
     }
 
@@ -107,17 +131,21 @@ public class Canvas extends JPanel implements Observer {
         if (diagram == null) return null;
 
         for (Component component : diagram.getComponents()) {
-            int x = Integer.parseInt(component.getXCoordinate().getValue());
-            int y = Integer.parseInt(component.getYCoordinate().getValue());
-            int width = 180; // Assuming fixed width
-            int height = 215; // Assuming fixed height
-
-            if (point.x >= x && point.x <= x + width &&
-                    point.y >= y && point.y <= y + height) {
+            if (isPointWithinComponentBounds(point, component)) {
                 return component;
             }
         }
         return null;
+    }
+
+    private boolean isPointWithinComponentBounds(Point point, Component component) {
+        int x = Integer.parseInt(component.getXCoordinate().getValue());
+        int y = Integer.parseInt(component.getYCoordinate().getValue());
+        int width = 180;  // Assuming fixed width
+        int height = 215; // Assuming fixed height
+
+        return point.x >= x && point.x <= x + width &&
+                point.y >= y && point.y <= y + height;
     }
 
     public void zoomIn() {
@@ -131,28 +159,34 @@ public class Canvas extends JPanel implements Observer {
     }
 
     public void setDiagram(Diagram diagram) {
-       if(this.diagram != null) {
-           this.diagram.removeObserver(this);
-
-           for(Component component: diagram.getComponents())
-           {
-               component.removeObserver(this);
-           }
-
-
-       }
-
-        this.diagram = diagram;
-        this.diagram.addObserver(this);
-
-        for(Component component: diagram.getComponents())
-        {
-            component.addObserver(this);
+        if (this.diagram != null) {
+            unregisterObservers();
         }
-
-        this.components=this.diagram.getComponents();
-
+        this.diagram = diagram;
+        registerObservers();
         repaint();
+    }
+
+
+    private void unregisterObservers() {
+        this.diagram.removeObserver(this);
+        for (Component component : diagram.getComponents()) {
+            component.removeObserver(this);
+            for(Property property: component.getProperties())
+            {
+                property.removeObserver(this);
+            }
+        }
+    }
+
+    private void registerObservers() {
+        this.diagram.addObserver(this);
+        for (Component component : diagram.getComponents()) {
+            component.addObserver(this);
+            for(Property property : component.getProperties()) {
+                property.addObserver(this);
+            }
+        }
     }
 
     public void addActionListeners(ActionListener propertiesPanelListener) {
@@ -160,13 +194,23 @@ public class Canvas extends JPanel implements Observer {
     }
 
     @Override
-    public void update() {
-        repaint();
-        if(components.size()<diagram.getComponents().size())
-        {
-            components.add(diagram.getComponents().getLast());
-            components.getLast().addObserver(this);
-        }
+    public void updateFromComponent() {
 
+        repaint();
+    }
+
+    @Override
+    public void updateFromDiagram() {
+        diagram.getComponents().getLast().addObserver(this);
+        for(Property property: diagram.getComponents().getLast().getProperties())
+        {
+            property.addObserver(this);
+        }
+        repaint();
+    }
+
+    @Override
+    public void updateFromProperty() {
+        repaint();
     }
 }

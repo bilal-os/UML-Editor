@@ -2,7 +2,7 @@ package UILayer;
 
 import Utilities.Diagram;
 import Utilities.Component;
-import Utilities.Observer;
+import Utilities.DiagramObserver;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +10,7 @@ import java.awt.event.*;
 import java.util.HashMap;
 import java.util.List;
 
-public class DiagramPanel extends JPanel implements Observer {
+public class DiagramPanel extends JPanel implements DiagramObserver {
     private Diagram diagram;
     private final HashMap<String, Boolean> expandedStates;
     private ActionListener componentPaletteListener;
@@ -183,7 +183,7 @@ public class DiagramPanel extends JPanel implements Observer {
     }
 
     @Override
-    public void update() {
+    public void updateFromDiagram() {
         // Safely update the UI
         SwingUtilities.invokeLater(() -> {
             // Update component count
@@ -191,7 +191,7 @@ public class DiagramPanel extends JPanel implements Observer {
 
             // Only add component if panel is expanded
             if (isExpanded() && !diagram.getComponents().isEmpty()) {
-                addComponent(diagram.getComponents().get(diagram.getComponents().size() - 1));
+                addComponent(diagram.getComponents().getLast());
             }
         });
     }

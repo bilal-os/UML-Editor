@@ -1,8 +1,8 @@
 package UILayer;
 
 import Utilities.Diagram;
-import Utilities.Observer;
 import Utilities.Project;
+import Utilities.ProjectObserver;
 
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
@@ -12,7 +12,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class DiagramsPanel1 extends JPanel implements Observer {
+public class DiagramsPanel1 extends JPanel implements ProjectObserver {
     // Core data structures
     private ArrayList<Diagram> diagrams;
     private Project currentProject;
@@ -139,7 +139,7 @@ public class DiagramsPanel1 extends JPanel implements Observer {
     }
 
     @Override
-    public void update() {
+    public void updateFromProject() {
         displayDiagrams();
     }
 

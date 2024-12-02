@@ -2,10 +2,10 @@ package Utilities;
 
 import java.util.ArrayList;
 
-public abstract class Property implements Subject{
+public abstract class Property {
     protected String type;
     protected String value;
-    protected ArrayList<Observer> observers;
+    protected ArrayList<PropertyObserver> observers;
 
     public Property(String type, String value) throws IllegalArgumentException{
 
@@ -32,22 +32,28 @@ public abstract class Property implements Subject{
 
     public abstract void validateInput(String type, String value) throws IllegalArgumentException;
 
-    public abstract void setValue(String value) throws IllegalArgumentException;
+    public abstract void addValue(String value) throws IllegalArgumentException;
 
-    public void addObserver(Observer observer)
+    public void setValue(String value) throws IllegalArgumentException
+    {
+        addValue(value);
+        notifyObservers();
+    }
+
+    public void addObserver(PropertyObserver observer)
     {
         observers.add(observer);
     }
 
-    public void removeObserver(Observer observer)
+    public void removeObserver(PropertyObserver observer)
     {
         observers.remove(observer);
     }
 
     public void notifyObservers() {
-        for(Observer observer : observers)
+        for(PropertyObserver observer : observers)
         {
-            observer.update();
+            observer.updateFromProperty();
         }
     }
 
