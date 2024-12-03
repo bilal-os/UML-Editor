@@ -97,7 +97,18 @@ public class MainWindowController {
     private class ViewAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            if(e.getSource() instanceof JMenuItem source) {
+                if ("Zoom In".equals(source.getText())) {
+                    System.out.println("Zoom In");
+                    canvas.zoomIn();
+                } else if ("Zoom Out".equals(source.getText())) {
+                    System.out.println("Zoom Out");
+                    canvas.zoomOut();
+                } else if ("Reset View".equals(source.getText())) {
+                    System.out.println("Reset View");
+                    canvas.resetZoom();
+                }
+            }
         }
     }
 

@@ -185,8 +185,11 @@ public class PropertiesPanel extends JPanel {
         }
 
         try {
-            component.addProperty(selectedType, value);
-            PropertyRowData newRowData = new PropertyRowData(selectedType, value);
+            // Create a new Property and add it to the component
+            Property newProperty = component.addProperty(selectedType, value);
+
+            // Create PropertyRowData with the newly created Property
+            PropertyRowData newRowData = new PropertyRowData(newProperty);
             propertyRows.add(newRowData);
             tableModel.addRow(new Object[]{selectedType, value});
             valueTextField.setText("");

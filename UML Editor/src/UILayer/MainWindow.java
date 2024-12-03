@@ -89,6 +89,7 @@ public class MainWindow extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(15, 15)); // Layout with spacing
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
     }
 
     /**
@@ -108,6 +109,7 @@ public class MainWindow extends JFrame {
         componentPalette = new ComponentPalette();
         diagramsPanel = new DiagramsPanel1(project);
         canvas = new Canvas();
+
 
         // Set up side panel
         sidePanel = new JPanel();

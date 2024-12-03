@@ -34,8 +34,7 @@ public abstract class Property {
 
     public abstract void addValue(String value) throws IllegalArgumentException;
 
-    public void setValue(String value) throws IllegalArgumentException
-    {
+    public void setValue(String value) throws IllegalArgumentException {
         addValue(value);
         notifyObservers();
     }
@@ -56,5 +55,4 @@ public abstract class Property {
             observer.updateFromProperty();
         }
     }
-
 }

@@ -4,6 +4,7 @@ import Utilities.Property;
 
 public class ClassProperty extends Property {
 
+
     public ClassProperty(String type, String value) throws IllegalArgumentException {
             super(type, value);
     }
@@ -25,8 +26,7 @@ public class ClassProperty extends Property {
     public void validateInput(String type, String value) throws IllegalArgumentException {
 
         // Validate based on property type
-        if("Class Name".equals(type))
-        {
+        if("Class Name".equals(type)) {
             if (!isValidName(value)) {
                 throw new IllegalArgumentException("Invalid syntax for Name. Expected: A non-empty name starting with an uppercase letter, followed by letters, numbers, or underscores.");
             }
@@ -42,6 +42,7 @@ public class ClassProperty extends Property {
         }
 
     }
+
     private boolean isValidName(String value) {
         // Check if the value is null or empty
         if (value == null || value.trim().isEmpty()) {
@@ -67,4 +68,6 @@ public class ClassProperty extends Property {
     private boolean isValidMethod(String value) {
         return value.matches("^[+#\\-]\\s*\\w+\\s*\\([^)]*\\)\\s*:\\s*\\w+$");
     }
+
+
 }

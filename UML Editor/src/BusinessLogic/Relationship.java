@@ -1,6 +1,7 @@
 package BusinessLogic;
 
 import Utilities.Component;
+import Utilities.Property;
 
 import java.awt.*;
 
@@ -22,13 +23,15 @@ public class Relationship extends Component {
     }
 
     @Override
-    public void createProperty(String type, String value) throws IllegalArgumentException {
+    public Property createProperty(String type, String value) throws IllegalArgumentException {
         // Validate property type
         if (!propertiesTypes.contains(type)) {
             throw new IllegalArgumentException("Invalid property type: " + type);
         }
         // Add validated property
-        properties.add(new RelationshipProperty(type, value));
+        RelationshipProperty property = new RelationshipProperty(type,value);
+        properties.add(property);
+        return property;
     }
     public void renderComponent(Graphics g) {
 

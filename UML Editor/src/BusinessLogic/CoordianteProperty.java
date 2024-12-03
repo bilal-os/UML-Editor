@@ -16,7 +16,6 @@ public class CoordianteProperty extends Property {
                 {
                     throw new IllegalArgumentException("Enter a valid coordinate");
                 }
-
     }
 
     @Override

@@ -13,6 +13,7 @@ public abstract class Component {
     protected CoordianteProperty y_coordinate;
     protected ArrayList<ComponentObserver> observers;
 
+
     public Component() {
         x_coordinate = new CoordianteProperty("X Coordinate",50);
         y_coordinate = new CoordianteProperty("Y Coordinate",50);
@@ -21,8 +22,7 @@ public abstract class Component {
         observers = new ArrayList<>();
         properties.add(x_coordinate);
         properties.add(y_coordinate);
-        propertiesTypes.add("X Coordinate");
-        propertiesTypes.add("Y Coordinate");
+
     }
 
     public void addObserver(ComponentObserver observer){
@@ -35,7 +35,7 @@ public abstract class Component {
 
     public void notifyObservers(){
         for(ComponentObserver observer : observers){
-            observer.updateFromComponent();
+            observer.updateFromComponent(this);
         }
     }
 
@@ -61,14 +61,13 @@ public abstract class Component {
         return propertiesTypes;
     }
 
-    public abstract void createProperty(String type, String value) throws IllegalArgumentException ;
+    public abstract Property createProperty(String type, String value) throws IllegalArgumentException ;
 
-    public void addProperty(String type, String value) throws IllegalArgumentException
-    {
-        createProperty(type, value);
+    public Property addProperty(String type, String value) throws IllegalArgumentException {
+        Property property = createProperty(type, value);
         notifyObservers();
+        return property;
     }
-
 
     public ArrayList<Property> getProperties() {
         return properties;

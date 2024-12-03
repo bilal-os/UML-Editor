@@ -21,7 +21,7 @@ public class Class extends Component {
     }
 
     @Override
-    public void createProperty(String type, String value) throws IllegalArgumentException {
+    public Property createProperty(String type, String value) throws IllegalArgumentException {
         // Ensure property type is valid
         if (!propertiesTypes.contains(type)) {
             throw new IllegalArgumentException("Invalid property type: " + type);
@@ -32,6 +32,7 @@ public class Class extends Component {
 
         // Add the validated property to the properties list
         properties.add(property);
+        return property;
     }
 
     @Override

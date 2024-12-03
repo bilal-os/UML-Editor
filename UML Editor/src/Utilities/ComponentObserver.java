@@ -1,5 +1,5 @@
 package Utilities;
 
 public interface ComponentObserver {
-    void updateFromComponent();
+    void updateFromComponent(Component component);
 }
