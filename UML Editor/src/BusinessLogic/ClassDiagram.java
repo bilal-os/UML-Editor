@@ -2,6 +2,7 @@ package BusinessLogic;
 
 import Utilities.Component;
 import Utilities.Diagram;
+import Utilities.Relation;
 
 import java.awt.*;
 
@@ -16,8 +17,7 @@ public class ClassDiagram extends Diagram {
         componentNames.add("Relationship");
     }
 
-    public Component createComponent(String componentName)
-    {
+    public Component createComponent(String componentName) {
         Component component;
         switch (componentName) {
             case "Class" -> {
@@ -39,6 +39,19 @@ public class ClassDiagram extends Diagram {
                 component = new Class("NewRelationship");
                 components.add(component);
                 return component;
+            }
+        }
+        return null;
+    }
+
+
+    public Relation createRelation(String relationName, Component component1, Component component2) {
+        Relation relation;
+        switch (relationName) {
+            case "Association" -> {
+                relation = new Association(component1, component2);
+                relations.add(relation);
+                return relation;
             }
         }
         return null;

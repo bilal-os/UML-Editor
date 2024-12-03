@@ -12,6 +12,7 @@ public abstract class Component {
     protected CoordianteProperty x_coordinate;
     protected CoordianteProperty y_coordinate;
     protected ArrayList<ComponentObserver> observers;
+    protected ArrayList<Relation> relations;
 
 
     public Component() {
@@ -20,9 +21,14 @@ public abstract class Component {
         properties = new ArrayList<>();
         propertiesTypes = new ArrayList<>();
         observers = new ArrayList<>();
+        relations = new ArrayList<>();
         properties.add(x_coordinate);
         properties.add(y_coordinate);
 
+    }
+
+    public ArrayList<Relation> getRelations() {
+        return relations;
     }
 
     public void addObserver(ComponentObserver observer){
