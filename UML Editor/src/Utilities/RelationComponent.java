@@ -1,9 +1,6 @@
 package Utilities;
 
-import BusinessLogic.CoordianteProperty;
-
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 
 public abstract class RelationComponent extends Component {

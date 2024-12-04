@@ -1,7 +1,5 @@
 package Utilities;
 
-import BusinessLogic.CoordianteProperty;
-
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -11,6 +9,7 @@ public abstract class Component {
     protected ArrayList<String> propertiesTypes;
     protected CoordianteProperty x_coordinate;
     protected CoordianteProperty y_coordinate;
+
     protected ArrayList<ComponentObserver> observers;
     protected Diagram associatedDiagram;
 
@@ -18,6 +17,7 @@ public abstract class Component {
         associatedDiagram = diagram;
         x_coordinate = new CoordianteProperty("X Coordinate",50,this);
         y_coordinate = new CoordianteProperty("Y Coordinate",50,this);
+
         properties = new ArrayList<>();
         propertiesTypes = new ArrayList<>();
         observers = new ArrayList<>();

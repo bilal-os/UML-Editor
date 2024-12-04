@@ -1,7 +1,4 @@
-package BusinessLogic;
-
-import Utilities.Component;
-import Utilities.Property;
+package Utilities;
 
 public class CoordianteProperty extends Property {
 

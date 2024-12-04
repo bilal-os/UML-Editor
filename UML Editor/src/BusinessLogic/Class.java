@@ -1,6 +1,7 @@
 package BusinessLogic;
 
 import Utilities.Component;
+import Utilities.CoordianteProperty;
 import Utilities.Diagram;
 import Utilities.Property;
 
@@ -9,6 +10,8 @@ import java.awt.*;
 import static java.lang.Integer.parseInt;
 
 public class Class extends Component {
+    private CoordianteProperty width;
+    private CoordianteProperty height;
 
     public Class(String name, Diagram diagram) {
 
@@ -19,6 +22,12 @@ public class Class extends Component {
 
         // Add default property
         properties.add(new ClassProperty("Class Name", name,this));
+        width = new CoordianteProperty("Width", 180, this);  // Default width
+        height = new CoordianteProperty("Height", 215, this);  // Default height
+        properties.add(width);
+        properties.add(height);
+        propertiesTypes.add("Width");
+        propertiesTypes.add("Height");
     }
 
     @Override
@@ -45,8 +54,8 @@ public class Class extends Component {
 
         int x = parseInt(x_coordinate.getValue());
         int y = parseInt(y_coordinate.getValue());
-        int width = 180;
-        int height = 215;
+        int width = parseInt(this.width.getValue());
+        int height = parseInt(this.height.getValue());
 
         // Draw outer box
         g2d.setColor(new Color(245, 245, 245));
@@ -54,8 +63,8 @@ public class Class extends Component {
 
         // Draw sections
         drawHeader(g2d, x, y, width);
-        drawAttributes(g2d, x, y + 35, width, 90);
-        drawMethods(g2d, x, y + 125, width, 90);
+        drawAttributes(g2d, x, y + 35, width, height / 3);
+        drawMethods(g2d, x, y + height * 2 / 3, width, height / 3);
 
         // Draw border
         g2d.setColor(Color.GRAY);
@@ -95,6 +104,14 @@ public class Class extends Component {
                 textY += 15;
             }
         }
+    }
+
+    public Property getWidth() {
+        return width;
+    }
+
+    public Property getHeight() {
+        return height;
     }
 
 }

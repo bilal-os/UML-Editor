@@ -16,7 +16,7 @@ public class AssociationProperty extends Property {
 
     // Strategy for non-relation component validation
     private static final ComponentValidationStrategy NON_RELATION_COMPONENT_STRATEGY =
-            component -> component != null && !(component instanceof RelationComponent);
+            component -> component != null && (component instanceof Class);
 
     /**
      * Constructor for AssociationProperty
