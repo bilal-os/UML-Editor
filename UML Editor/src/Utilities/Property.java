@@ -6,10 +6,12 @@ public abstract class Property {
     protected String type;
     protected String value;
     protected ArrayList<PropertyObserver> observers;
+    protected Component associatedComponent;
 
-    public Property(String type, String value) throws IllegalArgumentException{
+    public Property(String type, String value, Component associatedComponent) throws IllegalArgumentException{
 
         try{
+            this.associatedComponent = associatedComponent;
             validateInput(type, value);
             this.type = type;
             this.value = value;
@@ -20,6 +22,14 @@ public abstract class Property {
            throw new IllegalArgumentException(e);
        }
 
+    }
+
+    public Component getAssociatedComponent() {
+        return associatedComponent;
+    }
+
+    public void setAssociatedComponent(Component associatedComponent) {
+        this.associatedComponent = associatedComponent;
     }
 
     public String gettype() {

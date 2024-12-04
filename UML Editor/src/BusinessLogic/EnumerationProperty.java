@@ -1,11 +1,12 @@
 package BusinessLogic;
 
+import Utilities.Component;
 import Utilities.Property;
 
 public class EnumerationProperty extends Property {
 
-    public EnumerationProperty(String type, String value) throws IllegalArgumentException {
-        super(type, value);
+    public EnumerationProperty(String type, String value, Component component) throws IllegalArgumentException {
+        super(type, value, component);
     }
 
     @Override

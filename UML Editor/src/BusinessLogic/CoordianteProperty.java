@@ -1,12 +1,12 @@
 package BusinessLogic;
 
+import Utilities.Component;
 import Utilities.Property;
 
 public class CoordianteProperty extends Property {
 
-    public CoordianteProperty(String type, int value)
-    {
-        super(type,String.valueOf(value));
+    public CoordianteProperty(String type, int value, Component component) {
+        super(type,String.valueOf(value),component);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package BusinessLogic;
 
 import Utilities.Component;
+import Utilities.Diagram;
 import Utilities.Property;
 
 import java.awt.*;
@@ -9,15 +10,15 @@ import static java.lang.Integer.parseInt;
 
 public class Class extends Component {
 
-    public Class(String name) {
+    public Class(String name, Diagram diagram) {
 
-        super();
+        super(diagram);
 
         propertiesTypes.add("Attribute");
         propertiesTypes.add("Method");
 
         // Add default property
-        properties.add(new ClassProperty("Class Name", name));
+        properties.add(new ClassProperty("Class Name", name,this));
     }
 
     @Override
@@ -28,7 +29,7 @@ public class Class extends Component {
         }
 
         // Create a new ClassProperty object with validation
-        ClassProperty property = new ClassProperty(type, value);
+        ClassProperty property = new ClassProperty(type, value,this);
 
         // Add the validated property to the properties list
         properties.add(property);

@@ -2,9 +2,6 @@ package BusinessLogic;
 
 import Utilities.Component;
 import Utilities.Diagram;
-import Utilities.Relation;
-
-import java.awt.*;
 
 public class ClassDiagram extends Diagram {
 
@@ -14,47 +11,35 @@ public class ClassDiagram extends Diagram {
         componentNames.add("Class");
         componentNames.add("Interface");
         componentNames.add("Enum");
-        componentNames.add("Relationship");
+        componentNames.add("Association");
     }
 
     public Component createComponent(String componentName) {
         Component component;
         switch (componentName) {
             case "Class" -> {
-                component = new Class("NewClass");
+                component = new Class("NewClass",this);
                 components.add(component);
                 return component;
             }
             case "Interface" -> {
-                component = new Interface("NewInterface");
+                component = new Interface("NewInterface",this);
                 components.add(component);
                 return component;
             }
             case "Enum" -> {
-                component = new Enumeration("NewEnum");
+                component = new Enumeration("NewEnum",this);
                 components.add(component);
                 return component;
             }
-            case "Relationship" -> {
-                component = new Class("NewRelationship");
-                components.add(component);
-                return component;
-            }
-        }
-        return null;
-    }
-
-
-    public Relation createRelation(String relationName, Component component1, Component component2) {
-        Relation relation;
-        switch (relationName) {
             case "Association" -> {
-                relation = new Association(component1, component2);
-                relations.add(relation);
-                return relation;
+                component = new Association("New Association",this);
+                components.add(component);
+                return component;
             }
         }
         return null;
     }
+
 
 }

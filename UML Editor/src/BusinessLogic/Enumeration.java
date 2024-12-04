@@ -1,20 +1,21 @@
 package BusinessLogic;
 
 import Utilities.Component;
+import Utilities.Diagram;
 import Utilities.Property;
 
 import java.awt.*;
 
 public class Enumeration extends Component {
 
-    public Enumeration(String name) {
-        super();
+    public Enumeration(String name, Diagram diagram) {
+        super(diagram);
 
         // Define valid property types for an enumeration
         propertiesTypes.add("Value");
 
         // Add default name property
-        properties.add(new EnumerationProperty("Enumeration Name", name));
+        properties.add(new EnumerationProperty("Enumeration Name", name,this));
     }
 
     @Override
@@ -22,7 +23,7 @@ public class Enumeration extends Component {
         if (!propertiesTypes.contains(type)) {
             throw new IllegalArgumentException("Invalid property type for Enumeration: " + type);
         }
-        EnumerationProperty property = new EnumerationProperty(type, value);
+        EnumerationProperty property = new EnumerationProperty(type, value,this);
         properties.add(property);
         return property;
     }

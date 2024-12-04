@@ -12,23 +12,27 @@ public abstract class Component {
     protected CoordianteProperty x_coordinate;
     protected CoordianteProperty y_coordinate;
     protected ArrayList<ComponentObserver> observers;
-    protected ArrayList<Relation> relations;
+    protected Diagram associatedDiagram;
 
-
-    public Component() {
-        x_coordinate = new CoordianteProperty("X Coordinate",50);
-        y_coordinate = new CoordianteProperty("Y Coordinate",50);
+    public Component(Diagram diagram) {
+        associatedDiagram = diagram;
+        x_coordinate = new CoordianteProperty("X Coordinate",50,this);
+        y_coordinate = new CoordianteProperty("Y Coordinate",50,this);
         properties = new ArrayList<>();
         propertiesTypes = new ArrayList<>();
         observers = new ArrayList<>();
-        relations = new ArrayList<>();
         properties.add(x_coordinate);
         properties.add(y_coordinate);
-
     }
 
-    public ArrayList<Relation> getRelations() {
-        return relations;
+    public Diagram getDiagram()
+    {
+        return associatedDiagram;
+    }
+
+    public void setDiagram(Diagram diagram)
+    {
+        associatedDiagram = diagram;
     }
 
     public void addObserver(ComponentObserver observer){
@@ -94,4 +98,13 @@ public abstract class Component {
         return y_coordinate;
     }
 
+    public void removePropertyType(String type){
+
+        if(propertiesTypes.contains(type)){
+            propertiesTypes.remove(type);
+            notifyObservers();
+
+        }
+
+    }
 }

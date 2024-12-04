@@ -6,7 +6,7 @@ import java.util.List;
 
 public abstract class Diagram {
     protected ArrayList<Component> components;
-    protected ArrayList<Relation> relations;
+
     protected List<String> componentNames;
     private ArrayList<DiagramObserver> observers;
     protected String name;
@@ -15,13 +15,10 @@ public abstract class Diagram {
         this.name = name;
         components = new ArrayList<>();
         componentNames = new ArrayList<>();
-        relations = new ArrayList<>();
         observers = new ArrayList<>();
     }
 
-    public ArrayList<Relation> getRelations() {
-        return relations;
-    }
+
 
     public List<String> getComponentNames() {
         return componentNames;
@@ -39,14 +36,6 @@ public abstract class Diagram {
         
         notifyObservers();
         return component;
-    }
-
-    public abstract Relation createRelation(String relationName, Component component1, Component component2);
-
-    public Relation addRelation(String relationName, Component component1, Component component2) {
-        Relation relation = createRelation(relationName,component1,component2);
-        notifyObservers();
-        return relation;
     }
 
     public String getName()

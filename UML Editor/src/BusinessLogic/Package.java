@@ -1,20 +1,22 @@
 package BusinessLogic;
 
 import Utilities.Component;
+import Utilities.Diagram;
 import Utilities.Property;
+import jdk.jshell.Diag;
 
 import java.awt.*;
 
 public class Package extends Component {
 
-    public Package(String name) {
-        super();
+    public Package(String name, Diagram diagram) {
+        super(diagram);
 
         // Define valid property types for a package
         propertiesTypes.add("Contained Component");
 
         // Add default name property
-        properties.add(new PackageProperty("Package Name", name));
+        properties.add(new PackageProperty("Package Name", name,this));
     }
 
     @Override
@@ -22,7 +24,7 @@ public class Package extends Component {
         if (!propertiesTypes.contains(type)) {
             throw new IllegalArgumentException("Invalid property type for Package: " + type);
         }
-        PackageProperty property = new PackageProperty(type, value);
+        PackageProperty property = new PackageProperty(type, value,this);
         properties.add(property);
         return property;
     }

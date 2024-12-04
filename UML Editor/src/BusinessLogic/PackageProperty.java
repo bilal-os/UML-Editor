@@ -1,11 +1,12 @@
 package BusinessLogic;
 
+import Utilities.Component;
 import Utilities.Property;
 
 public class PackageProperty extends Property {
 
-    public PackageProperty(String type, String value) throws IllegalArgumentException {
-        super(type, value);
+    public PackageProperty(String type, String value, Component component) throws IllegalArgumentException {
+        super(type, value, component);
     }
 
     @Override

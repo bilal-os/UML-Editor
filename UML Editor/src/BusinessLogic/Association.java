@@ -1,41 +1,33 @@
 package BusinessLogic;
 
+import Utilities.*;
 import Utilities.Component;
-import Utilities.Relation;
-import Utilities.RelationType;
+import jdk.jshell.Diag;
 
 import java.awt.*;
 
-public class Association implements Relation {
-    private Component source;
-    private Component destination;
-    private RelationType type;
+    public class Association extends RelationComponent {
 
-    public Association(Component source, Component destination) {
-        this.source = source;
-        this.destination = destination;
-        this.type = RelationType.ASSOCIATION;
+        public Association(String name, Diagram diagram)
+        {
+            super(diagram);
+
+            properties.add(new AssociationProperty("Association Name",name, this));
+        }
+
+        @Override
+        public Property createProperty(String type, String value) throws IllegalArgumentException {
+            if (!propertiesTypes.contains(type)) {
+                throw new IllegalArgumentException("Invalid property type: " + type);
+            }
+
+            AssociationProperty property = new AssociationProperty(type,value,this);
+            properties.add(property);
+            return property;
+        }
+
+        @Override
+        public void renderComponent(Graphics g) {
+
+        }
     }
-
-    @Override
-    public Component getSource() {
-        return source;
-    }
-
-    @Override
-    public Component getDestination() {
-        return destination;
-    }
-
-    @Override
-    public RelationType getType() {
-        return type;
-    }
-
-    @Override
-    public void render(Graphics2D g2d)
-    {
-
-    }
-
-}

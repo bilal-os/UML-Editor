@@ -1,11 +1,12 @@
 package BusinessLogic;
 
+import Utilities.Component;
 import Utilities.Property;
 
 public class InterfaceProperty extends Property {
 
-    public InterfaceProperty(String type, String value) throws IllegalArgumentException {
-        super(type, value);
+    public InterfaceProperty(String type, String value, Component component) throws IllegalArgumentException {
+        super(type, value, component);
     }
 
     @Override
