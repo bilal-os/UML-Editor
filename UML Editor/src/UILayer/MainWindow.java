@@ -2,17 +2,17 @@ package UILayer;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
-import BusinessLogic.BusinessLogic;
-import BusinessLogic.BusinessLogicInterface;
-import Utilities.Diagram;
-import Utilities.Project;
+import UILayer.Canvas.Canvas;
+import UILayer.ComponentPalette.ComponentPalette;
+import UILayer.MenuBar.MenuBar;
+import UILayer.PropertiesPanel.PropertiesPanel;
+import Utilities.Project.Project;
 
 public class MainWindow extends JFrame {
     // UI Components
-    private MenuBar menuBar;
-    private Canvas canvas;
+    private UILayer.MenuBar.MenuBar menuBar;
+    private UILayer.Canvas.Canvas canvas;
     private PropertiesPanel propertiesPanel;
     private ComponentPalette componentPalette;
     private DiagramsPanel1 diagramsPanel;
@@ -50,12 +50,12 @@ public class MainWindow extends JFrame {
         });
     }
 
-    public MenuBar getMenu()
+    public UILayer.MenuBar.MenuBar getMenu()
     {
         return menuBar;
     }
 
-    public Canvas getCanvas()
+    public UILayer.Canvas.Canvas getCanvas()
     {
         return canvas;
     }

@@ -1,6 +1,6 @@
 package BusinessLogic;
 
-import Utilities.*;
+import Utilities.Project.Project;
 
 import java.util.ArrayList;
 

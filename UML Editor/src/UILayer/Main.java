@@ -2,7 +2,7 @@ package UILayer;
 
 import BusinessLogic.BusinessLogic;
 import BusinessLogic.BusinessLogicInterface;
-import Utilities.Project;
+import Utilities.Project.Project;
 
 public class Main {
     public static void main(String[] args) {
@@ -10,7 +10,7 @@ public class Main {
         BusinessLogicInterface businessLogicInterface = new BusinessLogic();
         Project project = businessLogicInterface.createProject(0, "Project 101");
         MainWindow mainWindow = new MainWindow(project);
-        MainWindowController mainWindowController = new MainWindowController(mainWindow,businessLogicInterface);
+        Controller controller = new Controller(mainWindow,businessLogicInterface);
         mainWindow.display();
     }
 }
