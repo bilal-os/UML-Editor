@@ -45,11 +45,8 @@ public abstract class Diagram {
         return name;
     }
 
-    public void renderDiagram(Graphics2D g) {
-        for (Component component : components) {
-            component.renderComponent(g);
-        }
-    }
+    abstract public void renderDiagram(Graphics2D g);
+
 
     public void addObserver(DiagramObserver observer) {
         observers.add(observer);

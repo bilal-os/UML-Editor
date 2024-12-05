@@ -5,6 +5,7 @@ import java.awt.*;
 
 import UILayer.Canvas.Canvas;
 import UILayer.ComponentPalette.ComponentPalette;
+import UILayer.DiagramsPanel.DiagramsPanel;
 import UILayer.MenuBar.MenuBar;
 import UILayer.PropertiesPanel.PropertiesPanel;
 import Utilities.Project.Project;
@@ -15,7 +16,7 @@ public class MainWindow extends JFrame {
     private UILayer.Canvas.Canvas canvas;
     private PropertiesPanel propertiesPanel;
     private ComponentPalette componentPalette;
-    private DiagramsPanel1 diagramsPanel;
+    private DiagramsPanel diagramsPanel;
     private JPanel workspacePanel;
     private JPanel sidePanel;
 
@@ -70,7 +71,7 @@ public class MainWindow extends JFrame {
         return componentPalette;
     }
 
-    public DiagramsPanel1 getDiagramsPanel()
+    public DiagramsPanel getDiagramsPanel()
     {
         return diagramsPanel;
     }
@@ -107,7 +108,7 @@ public class MainWindow extends JFrame {
         // Initialize core components
         propertiesPanel = new PropertiesPanel();
         componentPalette = new ComponentPalette();
-        diagramsPanel = new DiagramsPanel1(project);
+        diagramsPanel = new DiagramsPanel(project);
         canvas = new Canvas();
 
 

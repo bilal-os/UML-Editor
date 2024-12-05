@@ -3,6 +3,7 @@ package UILayer;
 import BusinessLogic.BusinessLogicInterface;
 import UILayer.Canvas.Canvas;
 import UILayer.ComponentPalette.ComponentPalette;
+import UILayer.DiagramsPanel.DiagramsPanel;
 import UILayer.MenuBar.MenuBar;
 import UILayer.PropertiesPanel.PropertiesPanel;
 import Utilities.CustomMessageDialog.CustomMessageDialog;
@@ -20,7 +21,7 @@ public class Controller {
 
     protected MenuBar menuBar;
     protected ComponentPalette componentPalette;
-    protected DiagramsPanel1 diagramsPanel;
+    protected DiagramsPanel diagramsPanel;
     protected PropertiesPanel propertiesPanel;
     protected Canvas canvas;
 

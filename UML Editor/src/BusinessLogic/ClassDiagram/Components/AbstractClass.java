@@ -1,26 +1,27 @@
 package BusinessLogic.ClassDiagram.Components;
 
-import BusinessLogic.ClassDiagram.Properties.InterfaceProperty;
+import BusinessLogic.ClassDiagram.Properties.AbstractClassProperty;
 import Utilities.Component.Component;
 import Utilities.Diagram.Diagram;
-import Utilities.Property.Property;
 import Utilities.Property.CoordianteProperty;
+import Utilities.Property.Property;
 
 import java.awt.*;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.Rectangle2D;
 
 import static java.lang.Integer.parseInt;
 
-public class Interface extends Component {
+public class AbstractClass extends Component {
     private CoordianteProperty width;
     private CoordianteProperty height;
 
-    public Interface(String name, Diagram diagram) {
+    public AbstractClass(String name, Diagram diagram) {
         super(diagram);
-        propertiesTypes.add("Method");
 
-        properties.add(new InterfaceProperty("Interface Name", name, this));
+        propertiesTypes.add("Attribute");
+        propertiesTypes.add("Method");
+        propertiesTypes.add("Abstract Method");
+
+        properties.add(new AbstractClassProperty("Class Name", name, this));
         width = new CoordianteProperty("Width", 180, this);
         height = new CoordianteProperty("Height", 215, this);
         properties.add(width);
@@ -30,9 +31,10 @@ public class Interface extends Component {
     @Override
     public Property createProperty(String type, String value) throws IllegalArgumentException {
         if (!propertiesTypes.contains(type)) {
-            throw new IllegalArgumentException("Invalid property type for Interface: " + type);
+            throw new IllegalArgumentException("Invalid property type for Abstract Class: " + type);
         }
-        InterfaceProperty property = new InterfaceProperty(type, value, this);
+
+        AbstractClassProperty property = new AbstractClassProperty(type, value, this);
         properties.add(property);
         return property;
     }
@@ -47,11 +49,12 @@ public class Interface extends Component {
         int width = parseInt(this.width.getValue());
         int height = parseInt(this.height.getValue());
 
-        g2d.setColor(new Color(240, 240, 255));
+        g2d.setColor(new Color(245, 245, 245));
         g2d.fillRect(x, y, width, height);
 
         drawHeader(g2d, x, y, width);
-        drawMethods(g2d, x, y + 35, width, height);
+        drawAttributes(g2d, x, y + 35, width, height / 3);
+        drawMethods(g2d, x, y + height * 2 / 3, width, height / 3);
 
         g2d.setColor(Color.GRAY);
         g2d.drawRect(x, y, width, height);
@@ -61,20 +64,24 @@ public class Interface extends Component {
         g2d.setColor(new Color(220, 220, 250));
         g2d.fillRect(x, y, width, 35);
         g2d.setColor(Color.BLACK);
+        g2d.setFont(new Font(g2d.getFont().getFontName(), Font.ITALIC, g2d.getFont().getSize()));
+        g2d.drawString("«abstract»", x + 10, y + 20);
+        g2d.setFont(new Font(g2d.getFont().getFontName(), Font.PLAIN, g2d.getFont().getSize()));
+        g2d.drawString(getName(), x + 10, y + 35);
+    }
 
-        // Centered text
-        String interfaceText = "«interface»";
-        String name = getName();
-        FontRenderContext frc = g2d.getFontRenderContext();
+    private void drawAttributes(Graphics2D g2d, int x, int y, int width, int height) {
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(x, y, width, height);
 
-        Rectangle2D interfaceBounds = g2d.getFont().getStringBounds(interfaceText, frc);
-        Rectangle2D nameBounds = g2d.getFont().getStringBounds(name, frc);
-
-        int interfaceTextX = x + (width - (int)interfaceBounds.getWidth()) / 2;
-        int nameTextX = x + (width - (int)nameBounds.getWidth()) / 2;
-
-        g2d.drawString(interfaceText, interfaceTextX, y + 20);
-        g2d.drawString(name, nameTextX, y + 35);
+        g2d.setColor(Color.BLACK);
+        int textY = y + 15;
+        for (Property attribute : properties) {
+            if (attribute.gettype().equals("Attribute")) {
+                g2d.drawString(attribute.getValue(), x + 10, textY);
+                textY += 15;
+            }
+        }
     }
 
     private void drawMethods(Graphics2D g2d, int x, int y, int width, int height) {
@@ -84,7 +91,7 @@ public class Interface extends Component {
         g2d.setColor(Color.BLACK);
         int textY = y + 15;
         for (Property method : properties) {
-            if (method.gettype().equals("Method")) {
+            if (method.gettype().equals("Method") || method.gettype().equals("Abstract Method")) {
                 g2d.drawString(method.getValue(), x + 10, textY);
                 textY += 15;
             }
@@ -94,7 +101,6 @@ public class Interface extends Component {
     public CoordianteProperty getWidth() {
         return width;
     }
-
     public CoordianteProperty getHeight() {
         return height;
     }

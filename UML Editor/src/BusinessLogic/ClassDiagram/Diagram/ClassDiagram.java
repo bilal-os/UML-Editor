@@ -1,11 +1,14 @@
 package BusinessLogic.ClassDiagram.Diagram;
 
-import BusinessLogic.ClassDiagram.Components.Association;
+import BusinessLogic.ClassDiagram.Components.*;
 import BusinessLogic.ClassDiagram.Components.Class;
-import BusinessLogic.ClassDiagram.Components.Enumeration;
-import BusinessLogic.ClassDiagram.Components.Interface;
+import BusinessLogic.ClassDiagram.Components.Package;
 import Utilities.Component.Component;
 import Utilities.Diagram.Diagram;
+
+import java.awt.*;
+import java.util.List;
+
 
 public class ClassDiagram extends Diagram {
 
@@ -16,6 +19,8 @@ public class ClassDiagram extends Diagram {
         componentNames.add("Interface");
         componentNames.add("Enum");
         componentNames.add("Association");
+        componentNames.add("Abstract Class");
+        componentNames.add("Package");
     }
 
     public Component createComponent(String componentName) {
@@ -41,9 +46,39 @@ public class ClassDiagram extends Diagram {
                 components.add(component);
                 return component;
             }
+            case "Abstract Class" -> {
+                component = new AbstractClass("NewAbstractClass",this);
+                components.add(component);
+                return component;
+            }
+            case "Package" -> {
+                component = new Package("NewPackage", this);
+                components.add(component);
+
+                return component;
+            }
+
         }
         return null;
     }
 
+    @Override
+    public void renderDiagram(Graphics2D g)
+    {
+        for (Component component : components) {
+            if(component instanceof Package)
+            {
+                component.renderComponent(g);
+            }
+        }
+
+        for(Component component : components)
+        {
+            if(!(component instanceof Package))
+            {
+                component.renderComponent(g);
+            }
+        }
+    }
 
 }

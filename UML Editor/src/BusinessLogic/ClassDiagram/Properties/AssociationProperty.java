@@ -1,5 +1,6 @@
 package BusinessLogic.ClassDiagram.Properties;
 
+import BusinessLogic.ClassDiagram.Components.AbstractClass;
 import BusinessLogic.ClassDiagram.Components.Class;
 import Utilities.Component.Component;
 import Utilities.Property.Property;
@@ -18,7 +19,7 @@ public class AssociationProperty extends Property {
 
         if ((type.equals("Source") || type.equals("Target"))) {
             Component foundComponent = findComponentByName(value);
-            if(!(foundComponent instanceof Class))
+            if(!((foundComponent instanceof Class) || (foundComponent instanceof AbstractClass)))
             {
                 throw new IllegalArgumentException("Invalid component: " + value + " cannot be associated.");
             }
