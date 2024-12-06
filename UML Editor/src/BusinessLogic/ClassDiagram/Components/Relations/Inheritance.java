@@ -9,6 +9,7 @@ import Utilities.Diagram.Diagram;
 import Utilities.Property.Property;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
 
 public class Inheritance extends RelationComponent {
 
@@ -30,10 +31,13 @@ public class Inheritance extends RelationComponent {
 
     @Override
     public void renderComponent(Graphics g) {
-        if (source == null || target == null ) return;
+        if (source == null || target == null) return;
 
         // Cast source to Class
         Class sourceClass = (Class) source;
+
+        // Cast target to Interface
+        Interface targetInterface = (Interface) target;
 
         // Get source coordinates and dimensions
         int sourceX = Integer.parseInt(sourceClass.getXCoordinate().getValue());
@@ -41,61 +45,34 @@ public class Inheritance extends RelationComponent {
         int sourceWidth = Integer.parseInt(sourceClass.getWidth().getValue());
         int sourceHeight = Integer.parseInt(sourceClass.getHeight().getValue());
 
-        // Iterate through all targets
+        // Get target coordinates and dimensions
+        int targetX = Integer.parseInt(targetInterface.getXCoordinate().getValue());
+        int targetY = Integer.parseInt(targetInterface.getYCoordinate().getValue());
+        int targetWidth = Integer.parseInt(targetInterface.getWidth().getValue());
+        int targetHeight = Integer.parseInt(targetInterface.getHeight().getValue());
 
-            // Cast target to Interface
-            Interface targetInterface = (Interface) target;
+        // Refined border point calculation
+        Point start = calculateIntersectionPoint(
+                sourceX, sourceY, sourceWidth, sourceHeight,
+                targetX, targetY, targetWidth, targetHeight
+        );
+        Point end = calculateIntersectionPoint(
+                targetX, targetY, targetWidth, targetHeight,
+                sourceX, sourceY, sourceWidth, sourceHeight
+        );
 
-            // Get target coordinates and dimensions
-            int targetX = Integer.parseInt(targetInterface.getXCoordinate().getValue());
-            int targetY = Integer.parseInt(targetInterface.getYCoordinate().getValue());
-            int targetWidth = Integer.parseInt(targetInterface.getWidth().getValue());
-            int targetHeight = Integer.parseInt(targetInterface.getHeight().getValue());
+        // Calculate line angle
+        double lineAngle = Math.atan2(end.y - start.y, end.x - start.x);
 
-            // Refined border point calculation
-            Point start = calculateIntersectionPoint(
-                    sourceX, sourceY, sourceWidth, sourceHeight,
-                    targetX, targetY, targetWidth, targetHeight
-            );
-            Point end = calculateIntersectionPoint(
-                    targetX, targetY, targetWidth, targetHeight,
-                    sourceX, sourceY, sourceWidth, sourceHeight
-            );
+        // Draw line
+        g.setColor(Color.BLACK);
+        g.drawLine(start.x, start.y, end.x, end.y);
 
-            // Draw line
-            g.setColor(Color.BLACK);
-            g.drawLine(start.x, start.y, end.x, end.y);
+        // Draw inheritance arrow (hollow triangle)
+        drawInheritanceArrow(g, start.x, start.y, end.x, end.y);
 
-            // Draw inheritance arrow (hollow triangle)
-            drawInheritanceArrow(g, start.x, start.y, end.x, end.y);
-
-    }
-
-    // Reuse the same intersection point calculation from Association
-    private Point calculateIntersectionPoint(
-            int fromX, int fromY, int fromWidth, int fromHeight,
-            int toX, int toY, int toWidth, int toHeight
-    ) {
-        // Same implementation as in Association class
-        int fromCenterX = fromX + fromWidth / 2;
-        int fromCenterY = fromY + fromHeight / 2;
-        int toCenterX = toX + toWidth / 2;
-        int toCenterY = toY + toHeight / 2;
-
-        double angle = Math.atan2(toCenterY - fromCenterY, toCenterX - fromCenterX);
-
-        Point selectedPoint = null;
-        if (angle >= -Math.PI/4 && angle <= Math.PI/4) {
-            selectedPoint = new Point(fromX + fromWidth, fromCenterY);
-        } else if (angle > Math.PI/4 && angle < 3*Math.PI/4) {
-            selectedPoint = new Point(fromCenterX, fromY + fromHeight);
-        } else if (angle <= -3*Math.PI/4 || angle >= 3*Math.PI/4) {
-            selectedPoint = new Point(fromX, fromCenterY);
-        } else {
-            selectedPoint = new Point(fromCenterX, fromY);
-        }
-
-        return selectedPoint;
+        // Render name
+        renderName(g, start, end, lineAngle, getPropertyValue("Inheritance Name"));
     }
 
     private void drawInheritanceArrow(Graphics g, int x1, int y1, int x2, int y2) {

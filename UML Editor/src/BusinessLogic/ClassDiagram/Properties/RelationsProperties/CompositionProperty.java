@@ -41,6 +41,27 @@ public class CompositionProperty extends Property {
                 relationComponent.removePropertyType("Target");
             }
         }
+        else if(type.equals("Source Multiplicity")) {
+            if(!validateMultiplicity(value))
+            {
+                throw new IllegalArgumentException("Invalid multiplicity Format: " + value );
+            }
+            relationComponent.removePropertyType("Source Multiplicity");
+        }
+
+        else if(type.equals("Target Multiplicity")) {
+            if(!validateMultiplicity(value))
+            {
+                throw new IllegalArgumentException("Invalid multiplicity Format: " + value );
+            }
+            relationComponent.removePropertyType("Target Multiplicity");
+        }
+    }
+
+    private boolean validateMultiplicity(String value) throws IllegalArgumentException {
+        // Regular expression for validating UML multiplicity formats
+        String multiplicityRegex = "^(\\d+|\\*)(\\.\\.(\\d+|\\*))?$";
+        return value.matches(multiplicityRegex);
     }
 
     private Component findComponentByName(String componentName) {

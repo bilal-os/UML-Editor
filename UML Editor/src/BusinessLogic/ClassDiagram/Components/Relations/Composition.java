@@ -15,6 +15,8 @@ public class Composition extends RelationComponent {
     public Composition(String name, Diagram diagram) {
         super(diagram);
         properties.add(new CompositionProperty("Composition Name", name, this));
+        propertiesTypes.add("Source Multiplicity");
+        propertiesTypes.add("Target Multiplicity");
     }
 
     @Override
@@ -30,7 +32,7 @@ public class Composition extends RelationComponent {
 
     @Override
     public void renderComponent(Graphics g) {
-        if (source == null || target == null ) return;
+        if (source == null || target == null) return;
 
         // Cast source to Class or AbstractClass
         Class sourceClass = (Class) source;
@@ -41,75 +43,52 @@ public class Composition extends RelationComponent {
         int sourceWidth = Integer.parseInt(sourceClass.getWidth().getValue());
         int sourceHeight = Integer.parseInt(sourceClass.getHeight().getValue());
 
-        // Iterate through all targets
-        Component targetComponent_ = target;
+        // Get target coordinates and dimensions
+        Component targetComponent = target;
 
-            // Get target coordinates and dimensions
-            int targetX = Integer.parseInt(
-                    targetComponent_ instanceof Class ?
-                            ((Class)targetComponent_).getXCoordinate().getValue() :
-                            ((Interface)targetComponent_).getXCoordinate().getValue()
-            );
-            int targetY = Integer.parseInt(
-                    targetComponent_ instanceof Class ?
-                            ((Class)targetComponent_).getYCoordinate().getValue() :
-                            ((Interface)targetComponent_).getYCoordinate().getValue()
-            );
-            int targetWidth = Integer.parseInt(
-                    targetComponent_ instanceof Class ?
-                            ((Class)targetComponent_).getWidth().getValue() :
-                            ((Interface)targetComponent_).getWidth().getValue()
-            );
-            int targetHeight = Integer.parseInt(
-                    targetComponent_ instanceof Class ?
-                            ((Class)targetComponent_).getHeight().getValue() :
-                            ((Interface)targetComponent_).getHeight().getValue()
-            );
+        int targetX = Integer.parseInt(
+                targetComponent instanceof Class ?
+                        ((Class)targetComponent).getXCoordinate().getValue() :
+                        ((Interface)targetComponent).getXCoordinate().getValue()
+        );
+        int targetY = Integer.parseInt(
+                targetComponent instanceof Class ?
+                        ((Class)targetComponent).getYCoordinate().getValue() :
+                        ((Interface)targetComponent).getYCoordinate().getValue()
+        );
+        int targetWidth = Integer.parseInt(
+                targetComponent instanceof Class ?
+                        ((Class)targetComponent).getWidth().getValue() :
+                        ((Interface)targetComponent).getWidth().getValue()
+        );
+        int targetHeight = Integer.parseInt(
+                targetComponent instanceof Class ?
+                        ((Class)targetComponent).getHeight().getValue() :
+                        ((Interface)targetComponent).getHeight().getValue()
+        );
 
-            // Refined border point calculation
-            Point start = calculateIntersectionPoint(
-                    sourceX, sourceY, sourceWidth, sourceHeight,
-                    targetX, targetY, targetWidth, targetHeight
-            );
-            Point end = calculateIntersectionPoint(
-                    targetX, targetY, targetWidth, targetHeight,
-                    sourceX, sourceY, sourceWidth, sourceHeight
-            );
+        // Refined border point calculation
+        Point start = calculateIntersectionPoint(
+                sourceX, sourceY, sourceWidth, sourceHeight,
+                targetX, targetY, targetWidth, targetHeight
+        );
+        Point end = calculateIntersectionPoint(
+                targetX, targetY, targetWidth, targetHeight,
+                sourceX, sourceY, sourceWidth, sourceHeight
+        );
 
-            // Draw line
-            g.setColor(Color.BLACK);
-            g.drawLine(start.x, start.y, end.x, end.y);
+        // Draw line
+        g.setColor(Color.BLACK);
+        g.drawLine(start.x, start.y, end.x, end.y);
 
-            // Draw composition diamond
-            drawCompositionDiamond(g, start.x, start.y, end.x, end.y);
+        // Draw composition diamond
+        drawCompositionDiamond(g, start.x, start.y, end.x, end.y);
 
-    }
-
-    // Reuse intersection point calculation from Association
-    private Point calculateIntersectionPoint(
-            int fromX, int fromY, int fromWidth, int fromHeight,
-            int toX, int toY, int toWidth, int toHeight
-    ) {
-        // Same implementation as in Association class
-        int fromCenterX = fromX + fromWidth / 2;
-        int fromCenterY = fromY + fromHeight / 2;
-        int toCenterX = toX + toWidth / 2;
-        int toCenterY = toY + toHeight / 2;
-
-        double angle = Math.atan2(toCenterY - fromCenterY, toCenterX - fromCenterX);
-
-        Point selectedPoint = null;
-        if (angle >= -Math.PI/4 && angle <= Math.PI/4) {
-            selectedPoint = new Point(fromX + fromWidth, fromCenterY);
-        } else if (angle > Math.PI/4 && angle < 3*Math.PI/4) {
-            selectedPoint = new Point(fromCenterX, fromY + fromHeight);
-        } else if (angle <= -3*Math.PI/4 || angle >= 3*Math.PI/4) {
-            selectedPoint = new Point(fromX, fromCenterY);
-        } else {
-            selectedPoint = new Point(fromCenterX, fromY);
-        }
-
-        return selectedPoint;
+        // Render name and multiplicities
+        double lineAngle = Math.atan2(end.y - start.y, end.x - start.x);
+        renderName(g, start, end, lineAngle, getPropertyValue("Composition Name"));
+        renderMultiplicity(g, start, lineAngle, getPropertyValue("Source Multiplicity"));
+        renderMultiplicity(g, end, lineAngle, getPropertyValue("Target Multiplicity"));
     }
 
     private void drawCompositionDiamond(Graphics g, int x1, int y1, int x2, int y2) {
@@ -136,7 +115,7 @@ public class Composition extends RelationComponent {
         xPoints[3] = (int)(x1 - diamondSize * Math.cos(angle - Math.PI/2));
         yPoints[3] = (int)(y1 - diamondSize * Math.sin(angle - Math.PI/2));
 
-        // Set color and draw
+        // Set color and draw (filled diamond for Composition)
         g.setColor(Color.BLACK);
         g.fillPolygon(xPoints, yPoints, 4);
     }
