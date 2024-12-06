@@ -20,6 +20,13 @@ public class InterfaceProperty extends Property {
             if (!isValidMethod(value)) {
                 throw new IllegalArgumentException("Invalid Interface Method: Expected format 'methodName(parameters) : returnType'.");
             }
+        } else if ("Width".equals(type) || "Height".equals(type)) {
+            // Allow numeric values
+            try {
+                Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Width and Height must be numeric values.");
+            }
         } else {
             throw new IllegalArgumentException("Unknown property type for Interface: " + type);
         }

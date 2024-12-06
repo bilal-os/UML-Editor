@@ -29,7 +29,6 @@ public class Package extends Component {
         properties.add(height);
     }
 
-
     @Override
     public Property createProperty(String type, String value) throws IllegalArgumentException {
         if (!propertiesTypes.contains(type)) {

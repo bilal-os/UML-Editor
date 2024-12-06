@@ -14,11 +14,10 @@ public abstract class RelationComponent extends Utilities.Component.Component {
     protected CoordianteProperty y_coordinate_2;
 
     protected Utilities.Component.Component source;
-    protected ArrayList<Utilities.Component.Component> targets;
+    protected Component target;
 
     public RelationComponent(Diagram diagram) {
         super(diagram);
-        targets = new ArrayList<>();
         x_coordinate_2 = new CoordianteProperty("X Coordinate 2",0,this);
         y_coordinate_2 = new CoordianteProperty("Y Coordinate 2",0,this);
 
@@ -37,14 +36,15 @@ public abstract class RelationComponent extends Utilities.Component.Component {
     }
 
     public void setTarget(Utilities.Component.Component component) {
-        targets.add(component);
+        this.target = component;
     }
 
     public Utilities.Component.Component getSource() {
         return source;
     }
 
-    public ArrayList<Component> getTargets() {
-        return targets;
+    public Component getTarget() {
+        return target;
     }
+
 }

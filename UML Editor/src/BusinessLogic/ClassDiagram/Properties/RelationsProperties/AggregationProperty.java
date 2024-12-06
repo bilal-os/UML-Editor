@@ -1,15 +1,16 @@
-package BusinessLogic.ClassDiagram.Properties;
+package BusinessLogic.ClassDiagram.Properties.RelationsProperties;
 
 import BusinessLogic.ClassDiagram.Components.AbstractClass;
 import BusinessLogic.ClassDiagram.Components.Class;
+import BusinessLogic.ClassDiagram.Components.Interface;
 import Utilities.Component.Component;
 import Utilities.Property.Property;
 import Utilities.Component.RelationComponent;
 
 import java.util.Objects;
 
-public class AssociationProperty extends Property {
-    public AssociationProperty(String type, String value, Component component) {
+public class AggregationProperty extends Property {
+    public AggregationProperty(String type, String value, Component component) {
         super(type, value, component);
     }
 
@@ -19,18 +20,24 @@ public class AssociationProperty extends Property {
 
         if ((type.equals("Source") || type.equals("Target"))) {
             Component foundComponent = findComponentByName(value);
-            if(!((foundComponent instanceof Class) || (foundComponent instanceof AbstractClass)))
-            {
-                throw new IllegalArgumentException("Invalid component: " + value + " cannot be associated.");
-            }
 
             if (type.equals("Source")) {
+                // Source CANNOT be an Interface
+                if (foundComponent instanceof Interface) {
+                    throw new IllegalArgumentException("Source cannot be an Interface: " + value);
+                }
+
+                // Source must be a concrete class (Class or AbstractClass)
+                if (!(foundComponent instanceof Class) && !(foundComponent instanceof AbstractClass)) {
+                    throw new IllegalArgumentException("Source must be a Class or Abstract Class: " + value);
+                }
+
                 relationComponent.setSource(foundComponent);
                 relationComponent.removePropertyType("Source");
             } else {
                 relationComponent.setTarget(foundComponent);
+                relationComponent.removePropertyType("Target");
             }
-
         }
     }
 

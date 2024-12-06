@@ -3,17 +3,19 @@ package BusinessLogic.ClassDiagram.Diagram;
 import BusinessLogic.ClassDiagram.Components.*;
 import BusinessLogic.ClassDiagram.Components.Class;
 import BusinessLogic.ClassDiagram.Components.Package;
+import BusinessLogic.ClassDiagram.Components.Relations.Aggregation;
+import BusinessLogic.ClassDiagram.Components.Relations.Association;
+import BusinessLogic.ClassDiagram.Components.Relations.Composition;
+import BusinessLogic.ClassDiagram.Components.Relations.Inheritance;
 import Utilities.Component.Component;
 import Utilities.Diagram.Diagram;
 
 import java.awt.*;
-import java.util.List;
 
 
 public class ClassDiagram extends Diagram {
 
-    public ClassDiagram()
-    {
+    public ClassDiagram() {
         super("Class Diagram");
         componentNames.add("Class");
         componentNames.add("Interface");
@@ -21,6 +23,9 @@ public class ClassDiagram extends Diagram {
         componentNames.add("Association");
         componentNames.add("Abstract Class");
         componentNames.add("Package");
+        componentNames.add("Inheritance");
+        componentNames.add("Composition");
+        componentNames.add("Aggregation");
     }
 
     public Component createComponent(String componentName) {
@@ -57,14 +62,28 @@ public class ClassDiagram extends Diagram {
 
                 return component;
             }
+            case "Inheritance" -> {
+                component = new Inheritance("NewInheritance",this);
+                components.add(component);
+                return component;
+            }
+            case "Composition" -> {
+                component = new Composition("NewComposition",this);
+                components.add(component);
+                return component;
+            }
+            case "Aggregation" -> {
+                component = new Aggregation("NewAggregation",this);
+                components.add(component);
+                return component;
+            }
 
         }
         return null;
     }
 
     @Override
-    public void renderDiagram(Graphics2D g)
-    {
+    public void renderDiagram(Graphics2D g) {
         for (Component component : components) {
             if(component instanceof Package)
             {
