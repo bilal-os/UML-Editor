@@ -9,7 +9,6 @@ import Utilities.Diagram.Diagram;
 import Utilities.Property.Property;
 
 import java.awt.*;
-import java.awt.geom.Line2D;
 
 public class Inheritance extends RelationComponent {
 

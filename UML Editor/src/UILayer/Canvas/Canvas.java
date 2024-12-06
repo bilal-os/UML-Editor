@@ -53,6 +53,11 @@ public class Canvas extends JPanel implements DiagramObserver, ComponentObserver
         zoomLevel = ZOOM_SETTINGS.defaultZoom;
     }
 
+    public Diagram getDiagram()
+    {
+        return diagram;
+    }
+
     // Interaction listeners setup
     private void setupInteractionListeners() {
         addMouseListener(new ComponentDragHandler());

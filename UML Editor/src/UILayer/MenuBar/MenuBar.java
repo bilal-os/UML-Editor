@@ -42,12 +42,10 @@ public class MenuBar extends JMenuBar {
 
     private JMenu createEditMenu() {
         JMenu editMenu = createMenu("Edit", KeyEvent.VK_E);
-        addMenuItem(editMenu, "Undo", KeyEvent.VK_U, KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
-        addMenuItem(editMenu, "Redo", KeyEvent.VK_R, KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK));
+        addMenuItem(editMenu, "Save PNG", KeyEvent.VK_U, KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
+        addMenuItem(editMenu, "Save JPEG", KeyEvent.VK_R, KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK));
         editMenu.addSeparator();
-        addMenuItem(editMenu, "Cut", KeyEvent.VK_T, KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
-        addMenuItem(editMenu, "Copy", KeyEvent.VK_C, KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
-        addMenuItem(editMenu, "Paste", KeyEvent.VK_P, KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
+        addMenuItem(editMenu,"Generate Class Diagram Code", KeyEvent.VK_R, KeyStroke.getKeyStroke(KeyEvent.VK_Y, InputEvent.CTRL_DOWN_MASK));
         return editMenu;
     }
 
@@ -102,11 +100,9 @@ public class MenuBar extends JMenuBar {
         addActionToMenuItem("Exit", fileAction);
 
         // Edit menu actions
-        addActionToMenuItem("Undo", editAction);
-        addActionToMenuItem("Redo", editAction);
-        addActionToMenuItem("Cut", editAction);
-        addActionToMenuItem("Copy", editAction);
-        addActionToMenuItem("Paste", editAction);
+        addActionToMenuItem("Save PNG", editAction);
+        addActionToMenuItem("Save JPEG", editAction);
+        addActionToMenuItem("Generate Class Diagram Code", editAction);
 
         // View menu actions
         addActionToMenuItem("Zoom In", viewAction);
@@ -115,7 +111,6 @@ public class MenuBar extends JMenuBar {
 
         // Diagram menu actions
         addActionToMenuItem("Create Class Diagram", diagramAction);
-        addActionToMenuItem("Create Sequence Diagram", diagramAction);
         addActionToMenuItem("Create Use Case Diagram", diagramAction);
 
         // Help menu actions
