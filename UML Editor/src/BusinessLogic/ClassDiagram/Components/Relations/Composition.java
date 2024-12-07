@@ -12,6 +12,11 @@ import Utilities.Property.Property;
 import java.awt.*;
 
 public class Composition extends RelationComponent {
+
+    public Composition()
+    {
+        super();
+    }
     public Composition(String name, Diagram diagram) {
         super(diagram);
         properties.add(new CompositionProperty("Composition Name", name, this));
@@ -34,38 +39,40 @@ public class Composition extends RelationComponent {
     public void renderComponent(Graphics g) {
         if (source == null || target == null) return;
 
-        // Cast source to Class or AbstractClass
-        Class sourceClass = (Class) source;
+        // Get source coordinates and dimensions, assuming source is either Class or AbstractClass
+        int sourceX = 0, sourceY = 0, sourceWidth = 0, sourceHeight = 0;
 
-        // Get source coordinates and dimensions
-        int sourceX = Integer.parseInt(sourceClass.getXCoordinate().getValue());
-        int sourceY = Integer.parseInt(sourceClass.getYCoordinate().getValue());
-        int sourceWidth = Integer.parseInt(sourceClass.getWidth().getValue());
-        int sourceHeight = Integer.parseInt(sourceClass.getHeight().getValue());
+        if (source instanceof Class) {
+            sourceX = Integer.parseInt(((Class) source).getXCoordinate().getValue());
+            sourceY = Integer.parseInt(((Class) source).getYCoordinate().getValue());
+            sourceWidth = Integer.parseInt(((Class) source).getWidth().getValue());
+            sourceHeight = Integer.parseInt(((Class) source).getHeight().getValue());
+        } else if (source instanceof AbstractClass) {
+            sourceX = Integer.parseInt(((AbstractClass) source).getXCoordinate().getValue());
+            sourceY = Integer.parseInt(((AbstractClass) source).getYCoordinate().getValue());
+            sourceWidth = Integer.parseInt(((AbstractClass) source).getWidth().getValue());
+            sourceHeight = Integer.parseInt(((AbstractClass) source).getHeight().getValue());
+        }
 
-        // Get target coordinates and dimensions
-        Component targetComponent = target;
+        // Get target coordinates and dimensions, assuming target is Class, AbstractClass or Interface
+        int targetX = 0, targetY = 0, targetWidth = 0, targetHeight = 0;
 
-        int targetX = Integer.parseInt(
-                targetComponent instanceof Class ?
-                        ((Class)targetComponent).getXCoordinate().getValue() :
-                        ((Interface)targetComponent).getXCoordinate().getValue()
-        );
-        int targetY = Integer.parseInt(
-                targetComponent instanceof Class ?
-                        ((Class)targetComponent).getYCoordinate().getValue() :
-                        ((Interface)targetComponent).getYCoordinate().getValue()
-        );
-        int targetWidth = Integer.parseInt(
-                targetComponent instanceof Class ?
-                        ((Class)targetComponent).getWidth().getValue() :
-                        ((Interface)targetComponent).getWidth().getValue()
-        );
-        int targetHeight = Integer.parseInt(
-                targetComponent instanceof Class ?
-                        ((Class)targetComponent).getHeight().getValue() :
-                        ((Interface)targetComponent).getHeight().getValue()
-        );
+        if (target instanceof Class) {
+            targetX = Integer.parseInt(((Class) target).getXCoordinate().getValue());
+            targetY = Integer.parseInt(((Class) target).getYCoordinate().getValue());
+            targetWidth = Integer.parseInt(((Class) target).getWidth().getValue());
+            targetHeight = Integer.parseInt(((Class) target).getHeight().getValue());
+        } else if (target instanceof AbstractClass) {
+            targetX = Integer.parseInt(((AbstractClass) target).getXCoordinate().getValue());
+            targetY = Integer.parseInt(((AbstractClass) target).getYCoordinate().getValue());
+            targetWidth = Integer.parseInt(((AbstractClass) target).getWidth().getValue());
+            targetHeight = Integer.parseInt(((AbstractClass) target).getHeight().getValue());
+        } else if (target instanceof Interface) {
+            targetX = Integer.parseInt(((Interface) target).getXCoordinate().getValue());
+            targetY = Integer.parseInt(((Interface) target).getYCoordinate().getValue());
+            targetWidth = Integer.parseInt(((Interface) target).getWidth().getValue());
+            targetHeight = Integer.parseInt(((Interface) target).getHeight().getValue());
+        }
 
         // Refined border point calculation
         Point start = calculateIntersectionPoint(
@@ -90,6 +97,8 @@ public class Composition extends RelationComponent {
         renderMultiplicity(g, start, lineAngle, getPropertyValue("Source Multiplicity"));
         renderMultiplicity(g, end, lineAngle, getPropertyValue("Target Multiplicity"));
     }
+
+
 
     private void drawCompositionDiamond(Graphics g, int x1, int y1, int x2, int y2) {
         int diamondSize = 12;

@@ -3,7 +3,7 @@ package BusinessLogic.ClassDiagram.Components;
 import BusinessLogic.ClassDiagram.Properties.AbstractClassProperty;
 import Utilities.Component.Component;
 import Utilities.Diagram.Diagram;
-import Utilities.Property.CoordianteProperty;
+import Utilities.Property.CoordinateProperty;
 import Utilities.Property.Property;
 
 import java.awt.*;
@@ -11,8 +11,13 @@ import java.awt.*;
 import static java.lang.Integer.parseInt;
 
 public class AbstractClass extends Component {
-    private CoordianteProperty width;
-    private CoordianteProperty height;
+    private CoordinateProperty width;
+    private CoordinateProperty height;
+
+    public AbstractClass()
+    {
+        super();
+    }
 
     public AbstractClass(String name, Diagram diagram) {
         super(diagram);
@@ -22,8 +27,8 @@ public class AbstractClass extends Component {
         propertiesTypes.add("Abstract Method");
 
         properties.add(new AbstractClassProperty("Class Name", name, this));
-        width = new CoordianteProperty("Width", 180, this);
-        height = new CoordianteProperty("Height", 215, this);
+        width = new CoordinateProperty("Width", 180, this);
+        height = new CoordinateProperty("Height", 215, this);
         properties.add(width);
         properties.add(height);
     }
@@ -98,10 +103,10 @@ public class AbstractClass extends Component {
         }
     }
 
-    public CoordianteProperty getWidth() {
+    public CoordinateProperty getWidth() {
         return width;
     }
-    public CoordianteProperty getHeight() {
+    public CoordinateProperty getHeight() {
         return height;
     }
 

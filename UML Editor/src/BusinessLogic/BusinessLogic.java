@@ -1,6 +1,7 @@
 package BusinessLogic;
 
 import BusinessLogic.ClassDiagram.Diagram.ClassDiagram;
+import DataLayer.DataLayer;
 import Utilities.Diagram.Diagram;
 import Utilities.Project.Project;
 
@@ -8,7 +9,13 @@ import java.util.ArrayList;
 
 public class BusinessLogic implements BusinessLogicInterface {
 
+     DataLayer dataLayerInterface;
+
     private ArrayList<Project> projects;
+     public BusinessLogic(DataLayer dataLayerInterface) {
+         this.dataLayerInterface = dataLayerInterface;
+         projects = new ArrayList<>();
+     }
 
     public ArrayList<Project> getProjects() {
         return projects;
@@ -25,7 +32,7 @@ public class BusinessLogic implements BusinessLogicInterface {
         //throw exception if an error occurs
         System.out.println("Opening Project: " + projectFilePath);
         //dummy opening of a project
-        return new Project(projects.size(),"Opened Project");
+        return dataLayerInterface.loadProject(projectFilePath);
     }
 
     public Project createProject(int id, String name)   {
@@ -38,6 +45,7 @@ public class BusinessLogic implements BusinessLogicInterface {
         //save project logic here
         //throw exception if an error occurs
         System.out.println("Saving project" + project.getName() + " to the " + fileLocation);
+        dataLayerInterface.saveProject(project,fileLocation);
     }
 
     public void createDiagram(int projectId, String type) throws Exception {
@@ -46,7 +54,7 @@ public class BusinessLogic implements BusinessLogicInterface {
             if (project.getId() == projectId) {
                 found = true;
                 if (type.equals("Class Diagram")) {
-                    project.addDiagram(new ClassDiagram());
+                    project.addDiagram(new ClassDiagram(project.getDiagrams().size()));
                 }
                 break;
             }

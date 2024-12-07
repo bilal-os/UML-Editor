@@ -2,9 +2,14 @@ package Utilities.Property;
 
 import Utilities.Component.Component;
 
-public class CoordianteProperty extends Property {
+public class CoordinateProperty extends Property {
 
-    public CoordianteProperty(String type, int value, Component component) {
+    public CoordinateProperty()
+    {
+        super();
+    }
+
+    public CoordinateProperty(String type, int value, Component component) {
         super(type,String.valueOf(value),component);
     }
 

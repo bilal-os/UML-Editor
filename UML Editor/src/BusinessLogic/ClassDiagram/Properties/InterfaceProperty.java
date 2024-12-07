@@ -5,6 +5,11 @@ import Utilities.Property.Property;
 
 public class InterfaceProperty extends Property {
 
+    public InterfaceProperty()
+    {
+        super();
+    }
+
     public InterfaceProperty(String type, String value, Component component) throws IllegalArgumentException {
         super(type, value, component);
         validateInput(type, value);

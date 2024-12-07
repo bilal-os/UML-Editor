@@ -5,6 +5,9 @@ import Utilities.Property.Property;
 
 public class ClassProperty extends Property {
 
+    public ClassProperty() {
+        super();
+    }
 
     public ClassProperty(String type, String value, Component component) throws IllegalArgumentException {
             super(type, value, component);

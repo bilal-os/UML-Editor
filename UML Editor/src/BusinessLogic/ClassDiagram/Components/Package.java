@@ -3,7 +3,7 @@ package BusinessLogic.ClassDiagram.Components;
 import BusinessLogic.ClassDiagram.Properties.PackageProperty;
 import Utilities.Component.Component;
 import Utilities.Diagram.Diagram;
-import Utilities.Property.CoordianteProperty;
+import Utilities.Property.CoordinateProperty;
 import Utilities.Property.Property;
 
 import java.awt.*;
@@ -14,8 +14,13 @@ import static java.lang.Integer.parseInt;
 
 public class Package extends Component {
     private List<Component> containedComponents;
-    private CoordianteProperty width;
-    private CoordianteProperty height;
+    private CoordinateProperty width;
+    private CoordinateProperty height;
+
+    public Package()
+    {
+        super();
+    }
 
     public Package(String name, Diagram diagram) {
         super(diagram);
@@ -23,8 +28,8 @@ public class Package extends Component {
         propertiesTypes.add("Add Component");
         properties.add(new PackageProperty("Package Name", name, this));
 
-        width = new CoordianteProperty("Width", 300, this);
-        height = new CoordianteProperty("Height", 400, this);
+        width = new CoordinateProperty("Width", 300, this);
+        height = new CoordinateProperty("Height", 400, this);
         properties.add(width);
         properties.add(height);
     }

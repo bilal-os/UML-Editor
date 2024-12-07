@@ -2,7 +2,7 @@ package BusinessLogic.ClassDiagram.Components;
 
 import BusinessLogic.ClassDiagram.Properties.ClassProperty;
 import Utilities.Component.Component;
-import Utilities.Property.CoordianteProperty;
+import Utilities.Property.CoordinateProperty;
 import Utilities.Diagram.Diagram;
 import Utilities.Property.Property;
 
@@ -11,8 +11,13 @@ import java.awt.*;
 import static java.lang.Integer.parseInt;
 
 public class Class extends Component {
-    private CoordianteProperty width;
-    private CoordianteProperty height;
+    private CoordinateProperty width;
+    private CoordinateProperty height;
+
+    public Class()
+    {
+        super();
+    }
 
     public Class(String name, Diagram diagram) {
 
@@ -23,9 +28,10 @@ public class Class extends Component {
 
         // Add default property
         properties.add(new ClassProperty("Class Name", name,this));
-        width = new CoordianteProperty("Width", 180, this);  // Default width
-        height = new CoordianteProperty("Height", 215, this);  // Default height
+        width = new CoordinateProperty("Width", 180, this);  // Default width
         properties.add(width);
+        height = new CoordinateProperty("Height", 215, this);  // Default height
+
         properties.add(height);
     }
 

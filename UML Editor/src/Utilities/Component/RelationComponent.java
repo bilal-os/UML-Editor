@@ -1,26 +1,45 @@
 package Utilities.Component;
 
+import BusinessLogic.ClassDiagram.Components.Relations.Aggregation;
+import BusinessLogic.ClassDiagram.Components.Relations.Association;
+import BusinessLogic.ClassDiagram.Components.Relations.Composition;
+import BusinessLogic.ClassDiagram.Components.Relations.Inheritance;
 import Utilities.Diagram.Diagram;
-import Utilities.Property.CoordianteProperty;
+import Utilities.Property.CoordinateProperty;
 import Utilities.Property.Property;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "relationComponentType")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Aggregation.class, name = "Aggregation"),
+        @JsonSubTypes.Type(value = Association.class, name = "Association"),
+        @JsonSubTypes.Type(value = Composition.class, name = "Composition"),
+        @JsonSubTypes.Type(value = Inheritance.class, name = "Inheritance")
+})
 public abstract class RelationComponent extends Utilities.Component.Component {
 
-    protected CoordianteProperty x_coordinate_2;
-    protected CoordianteProperty y_coordinate_2;
+    protected CoordinateProperty x_coordinate_2;
+    protected CoordinateProperty y_coordinate_2;
 
     protected Utilities.Component.Component source;
     protected Component target;
 
+    public RelationComponent()
+    {
+        super();
+
+    }
+
+
     public RelationComponent(Diagram diagram) {
         super(diagram);
-        x_coordinate_2 = new CoordianteProperty("X Coordinate 2",0,this);
-        y_coordinate_2 = new CoordianteProperty("Y Coordinate 2",0,this);
+        x_coordinate_2 = new CoordinateProperty("X Coordinate 2",0,this);
+        y_coordinate_2 = new CoordinateProperty("Y Coordinate 2",0,this);
 
         properties.add(x_coordinate_2);
         properties.add(y_coordinate_2);

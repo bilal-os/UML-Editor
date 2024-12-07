@@ -12,6 +12,10 @@ import java.util.Objects;
 
 public class PackageProperty extends Property {
 
+    public PackageProperty() {
+        super();
+    }
+
     public PackageProperty(String type, String value, Component component) throws IllegalArgumentException {
         super(type, value, component);
     }

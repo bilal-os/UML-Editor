@@ -9,14 +9,19 @@ import BusinessLogic.ClassDiagram.Components.Relations.Composition;
 import BusinessLogic.ClassDiagram.Components.Relations.Inheritance;
 import Utilities.Component.Component;
 import Utilities.Diagram.Diagram;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import java.awt.*;
 
-
 public class ClassDiagram extends Diagram {
 
-    public ClassDiagram() {
-        super("Class Diagram");
+public ClassDiagram() {
+    super();
+}
+
+    public ClassDiagram(int id) {
+        super("Class Diagram",id);
         componentNames.add("Class");
         componentNames.add("Interface");
         componentNames.add("Enum");

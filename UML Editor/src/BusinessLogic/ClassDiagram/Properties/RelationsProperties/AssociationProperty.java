@@ -9,6 +9,12 @@ import Utilities.Component.RelationComponent;
 import java.util.Objects;
 
 public class AssociationProperty extends Property {
+
+    public AssociationProperty()
+    {
+        super();
+    }
+
     public AssociationProperty(String type, String value, Component component) {
         super(type, value, component);
     }
@@ -19,10 +25,13 @@ public class AssociationProperty extends Property {
 
         if ((type.equals("Source") || type.equals("Target"))) {
             Component foundComponent = findComponentByName(value);
-            if(!((foundComponent instanceof Class) || (foundComponent instanceof AbstractClass)))
-            {
-                throw new IllegalArgumentException("Invalid component: " + value + " cannot be associated.");
-            }
+           if(type.equals("Source")) {
+               if(!((foundComponent instanceof Class) || (foundComponent instanceof AbstractClass)))
+               {
+                   throw new IllegalArgumentException("Invalid component: " + value + " cannot be associated.");
+               }
+           }
+
 
             if (type.equals("Source")) {
                 relationComponent.setSource(foundComponent);

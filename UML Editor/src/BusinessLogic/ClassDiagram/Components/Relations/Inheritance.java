@@ -1,5 +1,6 @@
 package BusinessLogic.ClassDiagram.Components.Relations;
 
+import BusinessLogic.ClassDiagram.Components.AbstractClass;
 import BusinessLogic.ClassDiagram.Components.Class;
 import BusinessLogic.ClassDiagram.Components.Interface;
 import BusinessLogic.ClassDiagram.Properties.RelationsProperties.InheritanceProperty;
@@ -11,6 +12,11 @@ import Utilities.Property.Property;
 import java.awt.*;
 
 public class Inheritance extends RelationComponent {
+
+    public Inheritance()
+    {
+        super();
+    }
 
     public Inheritance(String name, Diagram diagram) {
         super(diagram);
@@ -32,23 +38,35 @@ public class Inheritance extends RelationComponent {
     public void renderComponent(Graphics g) {
         if (source == null || target == null) return;
 
-        // Cast source to Class
-        Class sourceClass = (Class) source;
+        // Get source coordinates and dimensions, assuming source is either Class or AbstractClass
+        int sourceX = 0, sourceY = 0, sourceWidth = 0, sourceHeight = 0;
 
-        // Cast target to Interface
-        Interface targetInterface = (Interface) target;
+        if (source instanceof Class) {
+            sourceX = Integer.parseInt(((Class) source).getXCoordinate().getValue());
+            sourceY = Integer.parseInt(((Class) source).getYCoordinate().getValue());
+            sourceWidth = Integer.parseInt(((Class) source).getWidth().getValue());
+            sourceHeight = Integer.parseInt(((Class) source).getHeight().getValue());
+        } else if (source instanceof AbstractClass) {
+            sourceX = Integer.parseInt(((AbstractClass) source).getXCoordinate().getValue());
+            sourceY = Integer.parseInt(((AbstractClass) source).getYCoordinate().getValue());
+            sourceWidth = Integer.parseInt(((AbstractClass) source).getWidth().getValue());
+            sourceHeight = Integer.parseInt(((AbstractClass) source).getHeight().getValue());
+        }
 
-        // Get source coordinates and dimensions
-        int sourceX = Integer.parseInt(sourceClass.getXCoordinate().getValue());
-        int sourceY = Integer.parseInt(sourceClass.getYCoordinate().getValue());
-        int sourceWidth = Integer.parseInt(sourceClass.getWidth().getValue());
-        int sourceHeight = Integer.parseInt(sourceClass.getHeight().getValue());
+        // Get target coordinates and dimensions, assuming target is AbstractClass or Interface
+        int targetX = 0, targetY = 0, targetWidth = 0, targetHeight = 0;
 
-        // Get target coordinates and dimensions
-        int targetX = Integer.parseInt(targetInterface.getXCoordinate().getValue());
-        int targetY = Integer.parseInt(targetInterface.getYCoordinate().getValue());
-        int targetWidth = Integer.parseInt(targetInterface.getWidth().getValue());
-        int targetHeight = Integer.parseInt(targetInterface.getHeight().getValue());
+        if (target instanceof AbstractClass) {
+            targetX = Integer.parseInt(((AbstractClass) target).getXCoordinate().getValue());
+            targetY = Integer.parseInt(((AbstractClass) target).getYCoordinate().getValue());
+            targetWidth = Integer.parseInt(((AbstractClass) target).getWidth().getValue());
+            targetHeight = Integer.parseInt(((AbstractClass) target).getHeight().getValue());
+        } else if (target instanceof Interface) {
+            targetX = Integer.parseInt(((Interface) target).getXCoordinate().getValue());
+            targetY = Integer.parseInt(((Interface) target).getYCoordinate().getValue());
+            targetWidth = Integer.parseInt(((Interface) target).getWidth().getValue());
+            targetHeight = Integer.parseInt(((Interface) target).getHeight().getValue());
+        }
 
         // Refined border point calculation
         Point start = calculateIntersectionPoint(
@@ -73,6 +91,7 @@ public class Inheritance extends RelationComponent {
         // Render name
         renderName(g, start, end, lineAngle, getPropertyValue("Inheritance Name"));
     }
+
 
     private void drawInheritanceArrow(Graphics g, int x1, int y1, int x2, int y2) {
         int arrowSize = 10;
