@@ -65,4 +65,6 @@ class PackagePropertyTest {
         assertFalse(property.isValidName(""), "Empty package name should return false");
         assertFalse(property.isValidName(null), "Null package name should return false");
     }
+
+    ////////////
 }

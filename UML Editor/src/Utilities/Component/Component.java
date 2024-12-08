@@ -240,7 +240,7 @@ public abstract class Component {
             y_coordinate.setValue(String.valueOf(x));
         }
     }
-
+    ////////////
     // Abstract Method to be implemented by subclasses
     public abstract void renderComponent(Graphics g);
 }
