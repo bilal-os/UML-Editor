@@ -189,12 +189,41 @@ public class DiagramPanel extends JPanel implements DiagramObserver {
             // Update component count
             countLabel.setText(String.valueOf(diagram.getComponents().size()));
 
-            // Only add component if panel is expanded
-            if (isExpanded() && !diagram.getComponents().isEmpty()) {
-                addComponent(diagram.getComponents().getLast());
+            // Only update if panel is expanded
+            if (isExpanded()) {
+                // Completely recreate the components panel
+                recreateComponentsPanel();
             }
         });
     }
+
+    private void recreateComponentsPanel() {
+        // Remove existing components panel if it exists
+        if (componentsPanel != null) {
+            remove(componentsPanel);
+        }
+
+        // Recreate components panel
+        componentsPanel = new JPanel();
+        componentsPanel.setLayout(new BoxLayout(componentsPanel, BoxLayout.Y_AXIS));
+        componentsPanel.setBackground(BACKGROUND);
+        componentsPanel.setBorder(BorderFactory.createEmptyBorder(4, 28, 4, 4));
+
+        // Add current components
+        List<Component> components = diagram.getComponents();
+        for (Component component : components) {
+            componentsPanel.add(new ComponentPanel(component, propertiesPanelListener));
+            componentsPanel.add(Box.createVerticalStrut(4));
+        }
+
+        // Add to panel
+        add(componentsPanel, BorderLayout.CENTER);
+
+        // Refresh UI
+        revalidate();
+        repaint();
+    }
+
 
     private void addComponent(Component component) {
         // Safely add a new component to the panel

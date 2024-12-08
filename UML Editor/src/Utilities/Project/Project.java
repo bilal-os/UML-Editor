@@ -32,8 +32,17 @@ public class Project {
         return diagrams;
     }
 
+    public void setDiagrams(ArrayList<Diagram> diagrams) {
+            this.diagrams = diagrams;
+    }
+
     public void addDiagram(Diagram diagram) {
         diagrams.add(diagram);
+        notifyObservers();
+    }
+
+    public void removeDiagram(Diagram diagram) {
+        diagrams.remove(diagram);
         notifyObservers();
     }
 

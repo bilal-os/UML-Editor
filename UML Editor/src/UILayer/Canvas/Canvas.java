@@ -262,10 +262,12 @@ public class Canvas extends JPanel implements DiagramObserver, ComponentObserver
 
     @Override
     public void updateFromDiagram() {
+        if(!diagram.getComponents().isEmpty())
+        {
         diagram.getComponents().getLast().addObserver(this);
         for(Property property: diagram.getComponents().getLast().getProperties()) {
             property.addObserver(this);
-        }
+        }}
         repaint();
     }
 

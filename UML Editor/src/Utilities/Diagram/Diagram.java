@@ -25,6 +25,15 @@ public abstract class Diagram {
     private ArrayList<DiagramObserver> observers;
     protected String name;
     protected int id;
+    protected Project project;
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
 
     // Default Constructor
     public Diagram() {
@@ -81,6 +90,12 @@ public abstract class Diagram {
         }
     }
 
+    @JsonProperty("components")
+    public void removeComponent(Component component) {
+        components.remove(component);
+        notifyObservers();
+    }
+
     // Component Names Getters and Setters
     @JsonProperty("componentNames")
     public List<String> getComponentNames() {
@@ -122,6 +137,7 @@ public abstract class Diagram {
         notifyObservers();
         return component;
     }
+
 
     // Abstract method to render diagram
     abstract public void renderDiagram(Graphics2D g);
