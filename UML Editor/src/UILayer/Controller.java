@@ -10,12 +10,14 @@ import Utilities.CustomMessageDialog.CustomMessageDialog;
 import Utilities.Diagram.Diagram;
 import Utilities.Project.Project;
 import Utilities.Component.Component;
+import Utilities.Project.ProjectFileHandler;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 public class Controller {
     private final BusinessLogicInterface businessLogic;
@@ -161,12 +163,13 @@ public class Controller {
             }
 
             try {
-                businessLogic.saveProject(mainWindow.getProject(), saveDir.getAbsolutePath());
+                ProjectFileHandler.saveProject(mainWindow.getProject(), saveDir.getAbsolutePath());
                 CustomMessageDialog.showSuccess(mainWindow, "Project saved successfully!", "Success");
-            } catch (Exception ex) {
-                handleActionException(ex, "Project Save Error");
+            } catch (IOException ex) {
+                CustomMessageDialog.showError(mainWindow, "Error saving project: " + ex.getMessage(), "Error");
             }
         }
+
 
         private void openExistingProject() {
             File jsonFile = selectJsonFile("Select a Project File");
@@ -176,14 +179,15 @@ public class Controller {
             }
 
             try {
-                Project openedProject = businessLogic.openProject(jsonFile.getAbsolutePath());
+                Project openedProject = ProjectFileHandler.openProject(jsonFile.getAbsolutePath());
                 MainWindow newMainWindow = new MainWindow(openedProject);
                 new Controller(newMainWindow, businessLogic);
                 newMainWindow.display();
-            } catch (Exception ex) {
-                handleActionException(ex, "Project Open Error");
+            } catch (IOException ex) {
+                CustomMessageDialog.showError(mainWindow, "Error opening project: " + ex.getMessage(), "Error");
             }
         }
+
 
         private void exitApplication() {
             int choice = JOptionPane.showConfirmDialog(
