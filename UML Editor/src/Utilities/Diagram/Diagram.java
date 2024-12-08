@@ -2,6 +2,8 @@ package Utilities.Diagram;
 
 import BusinessLogic.ClassDiagram.Diagram.ClassDiagram;
 import Utilities.Component.Component;
+import Utilities.GenerateId;
+import Utilities.Project.Project;
 import com.fasterxml.jackson.annotation.*;
 
 import java.awt.*;
@@ -15,7 +17,7 @@ import java.util.List;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
-        scope = ClassDiagram.class
+        scope = Project.class
 )
 public abstract class Diagram {
     protected ArrayList<Component> components;
@@ -33,7 +35,7 @@ public abstract class Diagram {
 
     // Parameterized Constructor
     public Diagram(String name, int id) {
-        this.id = id;
+        this.id = GenerateId.generateId();
         this.name = name;
         components = new ArrayList<>();
         componentNames = new ArrayList<>();

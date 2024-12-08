@@ -1,13 +1,14 @@
 package Utilities.Project;
 
 import Utilities.Diagram.Diagram;
+import Utilities.GenerateId;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import java.util.ArrayList;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id", scope = Project.class)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Project {
 
     ArrayList<Diagram> diagrams;
@@ -23,7 +24,7 @@ public class Project {
     public Project(int id, String name) {
         diagrams = new ArrayList<>();
         observers = new ArrayList<>();
-        this.id = id;
+        this.id = GenerateId.generateId();
         this.name = name;
     }
 

@@ -16,6 +16,7 @@ public class AssociationProperty extends Property {
     }
 
     public AssociationProperty(String type, String value, Component component) {
+
         super(type, value, component);
     }
 

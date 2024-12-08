@@ -3,6 +3,7 @@ package Utilities.Component;
 import BusinessLogic.ClassDiagram.Components.AbstractClass;
 import BusinessLogic.ClassDiagram.Components.Enumeration;
 import BusinessLogic.ClassDiagram.Components.Interface;
+import Utilities.GenerateId;
 import Utilities.Property.CoordinateProperty;
 import Utilities.Property.Property;
 import Utilities.Diagram.Diagram;
@@ -17,12 +18,13 @@ import java.util.ArrayList;
         @JsonSubTypes.Type(value = BusinessLogic.ClassDiagram.Components.Class.class, name = "Class"),
         @JsonSubTypes.Type(value = Enumeration.class, name = "Enumeration"),
         @JsonSubTypes.Type(value = Interface.class, name = "Interface"),
-        @JsonSubTypes.Type(value = Package.class, name = "Package")
+        @JsonSubTypes.Type(value = Package.class, name = "Package"),
+        @JsonSubTypes.Type(value = RelationComponent.class, name = "RelationComponent")
 })
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
-        scope = Component.class
+        scope = Diagram.class
 )
 public abstract class Component {
     protected ArrayList<Property> properties;
@@ -52,7 +54,7 @@ public abstract class Component {
         propertiesTypes = new ArrayList<>();
         observers = new ArrayList<>();
 
-        this.id = associatedDiagram.getComponents().size();
+        this.id = GenerateId.generateId();
     }
 
     // Getters and Setters with Jackson annotations

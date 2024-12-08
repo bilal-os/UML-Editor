@@ -3,7 +3,10 @@ package Utilities.Property;
 import BusinessLogic.ClassDiagram.Properties.*;
 import BusinessLogic.ClassDiagram.Properties.RelationsProperties.*;
 import Utilities.Component.Component;
+import Utilities.GenerateId;
 import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import java.util.ArrayList;
 
@@ -23,10 +26,12 @@ import java.util.ArrayList;
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id",
-        scope = Property.class
+        scope = Component.class
 )
 public abstract class Property {
-    protected int id;
+    @JsonSerialize(using = ToStringSerializer.class)
+    protected Integer id;
+
     protected String type;
     protected String value;
     protected ArrayList<PropertyObserver> observers;
@@ -39,30 +44,39 @@ public abstract class Property {
 
     // Parameterized Constructor
     public Property(String type, String value, Component associatedComponent) throws IllegalArgumentException {
+
+        if (associatedComponent == null) {
+            throw new IllegalArgumentException("associatedComponent cannot be null");
+        }
+
         try {
             this.associatedComponent = associatedComponent;
             validateInput(type, value);
             this.type = type;
             this.value = value;
             observers = new ArrayList<>();
-            id = associatedComponent.getProperties().size();
+
+            // Use Integer instead of primitive int
+            this.id = GenerateId.generateId();
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(e);
         }
     }
 
-    // ID Getters and Setters
+    // ID Getters and Setters with explicit JSON handling
     @JsonProperty("id")
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
     @JsonProperty("id")
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    // Type Getters and Setters
+    // Rest of the implementation remains the same as in previous artifact
+
+    // Type-related methods
     @JsonProperty("type")
     public String getType() {
         return type;
@@ -73,12 +87,12 @@ public abstract class Property {
         this.type = type;
     }
 
-    // Backwards compatibility with existing method
+    // Backwards compatibility method
     public String gettype() {
         return getType();
     }
 
-    // Value Getters and Setters
+    // Value-related methods
     @JsonProperty("value")
     public String getValue() {
         return value;
@@ -90,7 +104,7 @@ public abstract class Property {
         notifyObservers();
     }
 
-    // Associated Component Getters and Setters
+    // Associated Component methods
     @JsonProperty("associatedComponent")
     public Component getAssociatedComponent() {
         return associatedComponent;
@@ -101,7 +115,7 @@ public abstract class Property {
         this.associatedComponent = associatedComponent;
     }
 
-    // Observer Management
+    // Observer methods
     public void addObserver(PropertyObserver observer) {
         if (observers == null) {
             observers = new ArrayList<>();
@@ -123,7 +137,7 @@ public abstract class Property {
         }
     }
 
-    // Abstract Methods to be implemented by subclasses
+    // Abstract methods
     public abstract void validateInput(String type, String value) throws IllegalArgumentException;
 
     public abstract void addValue(String value) throws IllegalArgumentException;

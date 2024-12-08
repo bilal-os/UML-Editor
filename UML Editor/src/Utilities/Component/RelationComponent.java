@@ -32,16 +32,14 @@ public abstract class RelationComponent extends Utilities.Component.Component {
     public RelationComponent()
     {
         super();
-
     }
 
 
     public RelationComponent(Diagram diagram) {
         super(diagram);
         x_coordinate_2 = new CoordinateProperty("X Coordinate 2",0,this);
-        y_coordinate_2 = new CoordinateProperty("Y Coordinate 2",0,this);
-
         properties.add(x_coordinate_2);
+        y_coordinate_2 = new CoordinateProperty("Y Coordinate 2",0,this);
         properties.add(y_coordinate_2);
         propertiesTypes.add("Source");
         propertiesTypes.add("Target");
