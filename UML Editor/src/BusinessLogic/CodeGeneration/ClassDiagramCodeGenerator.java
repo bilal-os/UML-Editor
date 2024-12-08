@@ -7,6 +7,7 @@ import BusinessLogic.ClassDiagram.Components.Package;
 import BusinessLogic.ClassDiagram.Components.Relations.Aggregation;
 import BusinessLogic.ClassDiagram.Components.Relations.Association;
 import BusinessLogic.ClassDiagram.Components.Relations.Composition;
+import BusinessLogic.ClassDiagram.Components.Relations.Inheritance;
 import Utilities.Component.Component;
 import Utilities.Diagram.Diagram;
 import Utilities.Property.Property;
@@ -43,9 +44,64 @@ public class ClassDiagramCodeGenerator implements DiagramCodeGenerator {
             generateClassCode(classComponent, fileLocation);
         } else if (component instanceof Interface interfaceComponent) {
             generateInterfaceCode(interfaceComponent, fileLocation);
+            generateInterfaceInheritanceCode(interfaceComponent, fileLocation);
         } else if (component instanceof Enumeration enumeration) {
             generateEnumerationCode(enumeration, fileLocation);
         }
+    }
+
+    private void generateInterfaceInheritanceCode(Interface interfaceComponent, String baseFileLocation) {
+        // Get the source interface name
+        String sourceName = getComponentName(interfaceComponent, "Interface Name", "UnknownInterface");
+        String packageName = determinePackageName(interfaceComponent);
+
+        // Find all inheritance relations where this interface is the source
+        List<Inheritance> inheritances = interfaceComponent.getDiagram().getComponents().stream()
+                .filter(c -> c instanceof Inheritance)
+                .map(c -> (Inheritance) c)
+                .filter(inheritance -> {
+                    Component source = inheritance.getSource();
+                    return source != null && source.equals(interfaceComponent);
+                })
+                .collect(Collectors.toList());
+
+        // If no inheritances, return early
+        if (inheritances.isEmpty()) {
+            return;
+        }
+
+        // Regenerate the interface code with implemented interfaces
+        StringBuilder interfaceCode = new StringBuilder();
+        appendPackageDeclaration(interfaceCode, packageName);
+
+        // Start interface declaration with implemented interfaces
+        interfaceCode.append("public interface ").append(sourceName);
+
+        // Add implemented interfaces
+        List<String> implementedInterfaces = inheritances.stream()
+                .map(inheritance -> {
+                    Component target = inheritance.getTarget();
+                    return getComponentName(target, "Interface Name", "UnknownInterface");
+                })
+                .collect(Collectors.toList());
+
+        if (!implementedInterfaces.isEmpty()) {
+            interfaceCode.append(" extends ")
+                    .append(String.join(", ", implementedInterfaces));
+        }
+
+        interfaceCode.append(" {\n");
+
+        // Add methods from the original interface
+        List<String> methods = getMethods(interfaceComponent);
+        for (String methodSignature : methods) {
+            generateInterfaceMethod(interfaceCode, methodSignature);
+        }
+
+        interfaceCode.append("}\n");
+
+        // Write to file (overwriting the previous version)
+        writeToFile(baseFileLocation, sourceName + ".java", interfaceCode.toString());
     }
 
     // Package name determination
@@ -683,8 +739,4 @@ public class ClassDiagramCodeGenerator implements DiagramCodeGenerator {
             return targetName;
         }
     }
-
-
-
-
 }
