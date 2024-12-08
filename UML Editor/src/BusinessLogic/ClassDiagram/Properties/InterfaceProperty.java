@@ -43,11 +43,11 @@ public class InterfaceProperty extends Property {
         this.value = value;
     }
 
-    private boolean isValidName(String value) {
+    public boolean isValidName(String value) {
         return value != null && value.matches("^[A-Z][A-Za-z0-9_]*$");
     }
 
-    private boolean isValidMethod(String value) {
+    public boolean isValidMethod(String value) {
         // Ensure method name starts with '+' and does not allow other access modifiers
         return value != null && value.matches("^\\+\\s*\\w+\\s*\\([^)]*\\)\\s*:\\s*\\w+(<\\w+(,\\s*\\w+)*>)?$");
     }

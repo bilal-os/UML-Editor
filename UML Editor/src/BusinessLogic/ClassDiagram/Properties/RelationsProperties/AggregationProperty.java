@@ -61,7 +61,7 @@ public class AggregationProperty extends Property {
         }
     }
 
-    private boolean validateMultiplicity(String value) throws IllegalArgumentException {
+    public boolean validateMultiplicity(String value) throws IllegalArgumentException {
         // Regular expression for validating UML multiplicity formats
         String multiplicityRegex = "^(\\d+|\\*)(\\.\\.(\\d+|\\*))?$";
         return value.matches(multiplicityRegex);

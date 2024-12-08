@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="irurueta.commons" type="repository">
+    <properties maven-id="com.irurueta:irurueta-commons:1.1.0" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/irurueta/irurueta-commons/1.1.0/irurueta-commons-1.1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

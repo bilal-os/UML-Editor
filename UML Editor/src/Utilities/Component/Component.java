@@ -57,6 +57,9 @@ public abstract class Component {
         this.id = GenerateId.generateId();
     }
 
+    public Component(String testComponent) {
+    }
+
     // Getters and Setters with Jackson annotations
     @JsonProperty("id")
     public int getId() {

@@ -64,6 +64,15 @@ public abstract class Property {
         }
     }
 
+    public Property(String number) {
+        // Assign the number to the value field directly
+        this.value = number;
+        this.type = "default";  // You could assign a default type or leave it uninitialized if necessary.
+        this.observers = new ArrayList<>();
+        this.id = GenerateId.generateId();  // Generate a unique ID
+    }
+
+
     // ID Getters and Setters with explicit JSON handling
     @JsonProperty("id")
     public Integer getId() {
