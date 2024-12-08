@@ -10,12 +10,6 @@ import Utilities.Component.RelationComponent;
 import java.util.Objects;
 
 public class CompositionProperty extends Property {
-
-    public CompositionProperty()
-    {
-        super();
-    }
-
     public CompositionProperty(String type, String value, Component component) {
         super(type, value, component);
     }
@@ -33,8 +27,8 @@ public class CompositionProperty extends Property {
                     throw new IllegalArgumentException("Source cannot be an Interface: " + value);
                 }
 
-                // Source must be a concrete class (Class or AbstractClass or Interface)
-                if (!(foundComponent instanceof Class) && !(foundComponent instanceof AbstractClass)  ) {
+                // Source must be a concrete class (Class or AbstractClass)
+                if (!(foundComponent instanceof Class) && !(foundComponent instanceof AbstractClass)) {
                     throw new IllegalArgumentException("Source must be a Class or Abstract Class: " + value);
                 }
 

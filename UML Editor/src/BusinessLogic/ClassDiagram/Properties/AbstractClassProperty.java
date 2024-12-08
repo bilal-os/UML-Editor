@@ -4,10 +4,6 @@ import Utilities.Component.Component;
 
 public class AbstractClassProperty extends ClassProperty {
 
-    public AbstractClassProperty() {
-        super();
-    }
-
     public AbstractClassProperty(String type, String value, Component component) throws IllegalArgumentException {
         super(type, value, component);
 

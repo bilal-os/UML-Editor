@@ -10,11 +10,6 @@ import Utilities.Component.RelationComponent;
 import java.util.Objects;
 
 public class AggregationProperty extends Property {
-
-    public AggregationProperty() {
-        super();
-    }
-
     public AggregationProperty(String type, String value, Component component) {
         super(type, value, component);
     }

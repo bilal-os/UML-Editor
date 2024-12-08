@@ -5,10 +5,6 @@ import Utilities.Property.Property;
 
 public class EnumerationProperty extends Property {
 
-    public EnumerationProperty() {
-        super();
-    }
-
     public EnumerationProperty(String type, String value, Component component) throws IllegalArgumentException {
         super(type, value, component);
         validateInput(type, value);

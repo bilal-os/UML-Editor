@@ -3,22 +3,18 @@ package BusinessLogic.ClassDiagram.Components;
 import BusinessLogic.ClassDiagram.Properties.EnumerationProperty;
 import Utilities.Component.Component;
 import Utilities.Diagram.Diagram;
-import Utilities.Property.CoordinateProperty;
+import Utilities.Property.CoordianteProperty;
 import Utilities.Property.Property;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.lang.Integer.parseInt;
 
 public class Enumeration extends Component {
-    private CoordinateProperty width;
-    private CoordinateProperty height;
-
-    public Enumeration()
-    {
-        super();
-    }
-
+    private CoordianteProperty width;
+    private CoordianteProperty height;
 
     public Enumeration(String name, Diagram diagram) {
         super(diagram);
@@ -28,8 +24,8 @@ public class Enumeration extends Component {
 
         // Add default name and dimension properties
         properties.add(new EnumerationProperty("Enumeration Name", name, this));
-        width = new CoordinateProperty("Width", 180, this);
-        height = new CoordinateProperty("Height", 215, this);
+        width = new CoordianteProperty("Width", 180, this);
+        height = new CoordianteProperty("Height", 215, this);
         properties.add(width);
         properties.add(height);
     }

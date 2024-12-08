@@ -4,7 +4,7 @@ import BusinessLogic.ClassDiagram.Properties.InterfaceProperty;
 import Utilities.Component.Component;
 import Utilities.Diagram.Diagram;
 import Utilities.Property.Property;
-import Utilities.Property.CoordinateProperty;
+import Utilities.Property.CoordianteProperty;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -15,14 +15,9 @@ import java.util.List;
 import static java.lang.Integer.parseInt;
 
 public class Interface extends Component {
-    private CoordinateProperty width;
-    private CoordinateProperty height;
+    private CoordianteProperty width;
+    private CoordianteProperty height;
     private List<String> methods;
-
-    public Interface()
-    {
-        super();
-    }
 
     public Interface(String name, Diagram diagram) {
         super(diagram);
@@ -35,8 +30,8 @@ public class Interface extends Component {
 
         // Add properties
         properties.add(new InterfaceProperty("Interface Name", name, this));
-        width = new CoordinateProperty("Width", 180, this);
-        height = new CoordinateProperty("Height", 215, this);
+        width = new CoordianteProperty("Width", 180, this);
+        height = new CoordianteProperty("Height", 215, this);
         properties.add(width);
         properties.add(height);
     }
@@ -121,11 +116,11 @@ public class Interface extends Component {
     }
 
     // Getters remain the same
-    public CoordinateProperty getWidth() {
+    public CoordianteProperty getWidth() {
         return width;
     }
 
-    public CoordinateProperty getHeight() {
+    public CoordianteProperty getHeight() {
         return height;
     }
 }
