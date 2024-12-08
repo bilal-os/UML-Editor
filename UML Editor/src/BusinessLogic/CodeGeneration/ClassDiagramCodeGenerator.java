@@ -241,10 +241,47 @@ public class ClassDiagramCodeGenerator implements DiagramCodeGenerator {
         StringBuilder classCode = new StringBuilder();
         appendPackageDeclaration(classCode, packageName);
         appendClassDeclaration(classCode, className, classComponent, isAbstract);
+        appendClassInheritance(classCode, className, classComponent, isAbstract);
 
         writeToFile(baseFileLocation, className + ".java", classCode.toString());
     }
 
+    private void appendClassInheritance(StringBuilder classCode, String className, Component classComponent, boolean isAbstract) {
+        // Find all inheritance relations where this component is the source
+        List<Inheritance> inheritances = classComponent.getDiagram().getComponents().stream()
+                .filter(c -> c instanceof Inheritance)
+                .map(c -> (Inheritance) c)
+                .filter(inheritance -> {
+                    Component source = inheritance.getSource();
+                    return source != null && source.equals(classComponent);
+                })
+                .collect(Collectors.toList());
+
+        // Class declaration with optional inheritance
+        String classType = isAbstract ? "abstract class" : "class";
+        classCode.append("public ").append(classType).append(" ").append(className);
+
+        // Add parent class if inheritance exists
+        if (!inheritances.isEmpty()) {
+            Component parentComponent = inheritances.get(0).getTarget();
+
+            // Determine parent component type and name
+            String parentName = getComponentName(parentComponent,
+                    parentComponent instanceof Class ? "Class Name" :
+                            parentComponent instanceof AbstractClass ? "Class Name" :
+                                    parentComponent instanceof Interface ? "Interface Name" : "UnknownParent",
+                    "UnknownParent");
+
+            // Append extends or implements based on parent type
+            if (parentComponent instanceof Interface) {
+                classCode.append(" implements ").append(parentName);
+            } else {
+                classCode.append(" extends ").append(parentName);
+            }
+        }
+
+        classCode.append(" {\n");
+    }
 
     // Collect and categorize attributes and methods
     private AttributeMethodCollections collectAttributesAndMethods(Component classComponent) {
