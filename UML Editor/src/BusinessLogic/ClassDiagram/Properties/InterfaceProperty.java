@@ -5,14 +5,12 @@ import Utilities.Property.Property;
 
 public class InterfaceProperty extends Property {
 
-    public InterfaceProperty()
-    {
+    public InterfaceProperty() {
         super();
     }
 
     public InterfaceProperty(String type, String value, Component component) throws IllegalArgumentException {
         super(type, value, component);
-        validateInput(type, value);
     }
 
     @Override
@@ -23,12 +21,11 @@ public class InterfaceProperty extends Property {
             }
         } else if ("Method".equals(type)) {
             if (!isValidMethod(value)) {
-                throw new IllegalArgumentException("Invalid Interface Method: Expected format 'methodName(parameters) : returnType'.");
+                throw new IllegalArgumentException("Invalid Interface Method: Expected format '+methodName(parameters) : returnType'. Method name must start with '+'.");
             }
         } else if ("Width".equals(type) || "Height".equals(type)) {
-            // Allow numeric values
             try {
-                Integer.parseInt(value);
+                Integer.parseInt(value); // Validate numeric input
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("Width and Height must be numeric values.");
             }
@@ -39,6 +36,9 @@ public class InterfaceProperty extends Property {
 
     @Override
     public void addValue(String value) throws IllegalArgumentException {
+        if (this.type == null || this.type.isEmpty()) {
+            throw new IllegalArgumentException("Property type must be set before adding a value.");
+        }
         validateInput(this.type, value);
         this.value = value;
     }
@@ -48,6 +48,7 @@ public class InterfaceProperty extends Property {
     }
 
     private boolean isValidMethod(String value) {
-        return value != null && value.matches("^\\w+\\s*\\([^)]*\\)\\s*:\\s*\\w+$");
+        // Ensure method name starts with '+' and does not allow other access modifiers
+        return value != null && value.matches("^\\+\\s*\\w+\\s*\\([^)]*\\)\\s*:\\s*\\w+(<\\w+(,\\s*\\w+)*>)?$");
     }
 }
