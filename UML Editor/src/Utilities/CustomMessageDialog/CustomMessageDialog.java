@@ -11,6 +11,9 @@ public class CustomMessageDialog {
     private static final Color WARNING_COLOR = new Color(255, 152, 0);
     private static final Color INFO_COLOR = new Color(33, 150, 243);
 
+    // Transient field for icon to avoid serialization issues
+    private transient Icon currentIcon;
+
     // Method to show success message
     public static void showSuccess(Component parentComponent, String message, String title) {
         UIManager.put("OptionPane.background", SUCCESS_COLOR.brighter());

@@ -1,31 +1,29 @@
 package Utilities.Project;
 
 import Utilities.Diagram.Diagram;
-import Utilities.GenerateId;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
+import java.io.Serializable;
 import java.util.ArrayList;
 
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-public class Project {
+public class Project implements Serializable {
+    // Ensure compatibility with serialization
+    private static final long serialVersionUID = 1L;
 
-    ArrayList<Diagram> diagrams;
-    protected int id;
-    String name;
-    ArrayList<ProjectObserver> observers;
+    private ArrayList<Diagram> diagrams;
+    private int id;
+    private String name;
 
-    public Project() {
-        diagrams = new ArrayList<>();
-        observers = new ArrayList<>();
-    }
+    // Mark observers as transient to avoid serialization issues
+    private transient ArrayList<ProjectObserver> observers;
 
     public Project(int id, String name) {
         diagrams = new ArrayList<>();
         observers = new ArrayList<>();
-        this.id = GenerateId.generateId();
+        this.id = id;
         this.name = name;
+    }
+
+    public void setDiagrams(ArrayList<Diagram> diagrams) {
+        this.diagrams = diagrams;
     }
 
     public ArrayList<Diagram> getDiagrams() {
@@ -41,6 +39,10 @@ public class Project {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -49,14 +51,16 @@ public class Project {
         this.name = name;
     }
 
+    // Methods for managing observers
     public void addObserver(ProjectObserver observer) {
-            observers.add(observer);
+        observers.add(observer);
     }
 
     public void removeObserver(ProjectObserver observer) {
         observers.remove(observer);
     }
 
+    // Notify all observers
     public void notifyObservers() {
         for (ProjectObserver observer : observers) {
             observer.updateFromProject();

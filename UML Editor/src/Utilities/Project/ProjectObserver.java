@@ -1,5 +1,7 @@
 package Utilities.Project;
 
-public interface ProjectObserver {
+import java.io.Serializable;
+
+public interface ProjectObserver extends Serializable {
     void updateFromProject();
 }

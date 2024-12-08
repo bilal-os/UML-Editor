@@ -1,5 +1,7 @@
 package Utilities.Component;
 
-public interface ComponentObserver {
+import java.io.Serializable;
+
+public interface ComponentObserver extends Serializable {
     void updateFromComponent(Component component);
 }
