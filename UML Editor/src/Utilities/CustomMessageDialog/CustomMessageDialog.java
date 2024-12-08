@@ -88,7 +88,7 @@ public class CustomMessageDialog {
     }
 
     // Helper method to create custom icons
-    private static Icon createCustomIcon(String text, Color color) {
+    static Icon createCustomIcon(String text, Color color) {
         return new Icon() {
             @Override
             public void paintIcon(Component c, Graphics g, int x, int y) {
@@ -123,7 +123,7 @@ public class CustomMessageDialog {
     }
 
     // Reset UI Manager properties
-    private static void resetUIManager() {
+    static void resetUIManager() {
         UIManager.put("OptionPane.background", null);
         UIManager.put("Panel.background", null);
         UIManager.put("OptionPane.messageForeground", null);

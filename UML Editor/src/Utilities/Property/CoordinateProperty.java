@@ -4,14 +4,18 @@ import Utilities.Component.Component;
 
 public class CoordinateProperty extends Property {
 
+    private Object component;
+
     public CoordinateProperty()
     {
         super();
     }
 
+
     public CoordinateProperty(String type, int value, Component component) {
         super(type,String.valueOf(value),component);
     }
+
 
     @Override
     public void validateInput(String type, String value) throws IllegalArgumentException {
@@ -33,5 +37,9 @@ public class CoordinateProperty extends Property {
         {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    public Object getComponent() {
+        return this.component;
     }
 }

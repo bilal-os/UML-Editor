@@ -35,11 +35,11 @@ public class EnumerationProperty extends Property {
         this.value = value;
     }
 
-    private boolean isValidName(String value) {
+    boolean isValidName(String value) {
         return value != null && !value.trim().isEmpty() && value.matches("^[A-Z][A-Za-z0-9_]*$");
     }
 
-    private boolean isValidValue(String value) {
+    boolean isValidValue(String value) {
         return value != null && !value.trim().isEmpty() && value.matches("^[A-Z0-9_]+$");
     }
 }

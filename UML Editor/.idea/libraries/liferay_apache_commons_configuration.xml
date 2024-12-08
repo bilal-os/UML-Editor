@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="liferay.apache.commons.configuration" type="repository">
+    <properties maven-id="com.liferay:org.apache.commons.configuration:1.10.LIFERAY-PATCHED-2" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/liferay/org.apache.commons.configuration/1.10.LIFERAY-PATCHED-2/org.apache.commons.configuration-1.10.LIFERAY-PATCHED-2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

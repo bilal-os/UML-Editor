@@ -128,4 +128,8 @@ public class Interface extends Component {
     public CoordinateProperty getHeight() {
         return height;
     }
+
+    public List<String> getMethods() {
+        return methods;
+    }
 }

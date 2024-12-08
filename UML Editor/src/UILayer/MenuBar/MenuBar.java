@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MenuBar extends JMenuBar {
-    private final Map<String, JMenuItem> menuItemsMap;
+    final Map<String, JMenuItem> menuItemsMap;
 
     public MenuBar() {
         menuItemsMap = new HashMap<>();
@@ -118,7 +118,7 @@ public class MenuBar extends JMenuBar {
         addActionToMenuItem("Help Contents", helpAction);
     }
 
-    private void addActionToMenuItem(String menuItemName, ActionListener action) {
+    void addActionToMenuItem(String menuItemName, ActionListener action) {
         System.out.println("Adding action " + menuItemName);
         JMenuItem menuItem = menuItemsMap.get(menuItemName);
         if (menuItem != null) {

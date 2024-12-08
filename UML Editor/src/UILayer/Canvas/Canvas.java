@@ -15,7 +15,7 @@ import java.util.Optional;
 
 public class Canvas extends JPanel implements DiagramObserver, ComponentObserver, PropertyObserver {
     // Configuration constants
-    private static final ZoomSettings ZOOM_SETTINGS = new ZoomSettings(
+    public static final ZoomSettings ZOOM_SETTINGS = new ZoomSettings(
             1.0f,   // Default zoom
             2.0f,   // Max zoom
             0.5f,   // Min zoom
@@ -33,16 +33,21 @@ public class Canvas extends JPanel implements DiagramObserver, ComponentObserver
     );
 
     // State variables
-    private float zoomLevel;
+    float zoomLevel;
     private Diagram diagram;
     private Point dragStart;
-    private Component selectedComponent;
+    Component selectedComponent;
     private ActionListener propertiesPanelListener;
+
 
     // Constructor
     public Canvas() {
         initializeCanvas();
         setupInteractionListeners();
+    }
+
+    public static Object getCanvasSettings() {
+        return null;
     }
 
     // Canvas initialization
@@ -155,7 +160,7 @@ public class Canvas extends JPanel implements DiagramObserver, ComponentObserver
         renderCanvasWithZoom((Graphics2D) g);
     }
 
-    private void renderCanvasWithZoom(Graphics2D g2d) {
+    void renderCanvasWithZoom(Graphics2D g2d) {
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         AffineTransform originalTransform = g2d.getTransform();
@@ -295,4 +300,14 @@ public class Canvas extends JPanel implements DiagramObserver, ComponentObserver
             int width,
             int height
     ) {}
+
+    public float getZoomLevel() {
+        return zoomLevel;
+    }
+
+    public static ZoomSettings getZoomSettings() {
+        return ZOOM_SETTINGS;
+    }
+
+
 }

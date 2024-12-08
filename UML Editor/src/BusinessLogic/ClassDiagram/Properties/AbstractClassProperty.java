@@ -39,7 +39,7 @@ public class AbstractClassProperty extends ClassProperty {
         }
     }
 
-    private boolean isValidAbstractMethod(String value) {
+    boolean isValidAbstractMethod(String value) {
         return value.matches("^[+#\\-]\\s*\\w+\\s*\\([^)]*\\)\\s*:\\s*\\w+$");
     }
 }

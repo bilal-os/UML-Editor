@@ -47,7 +47,7 @@ public class ClassProperty extends Property {
 
     }
 
-    private boolean isValidName(String value) {
+    boolean isValidName(String value) {
         // Check if the value is null or empty
         if (value == null || value.trim().isEmpty()) {
             return false;
@@ -64,12 +64,12 @@ public class ClassProperty extends Property {
     }
 
     // Validate Attribute syntax: visibility name : type
-    private boolean isValidAttribute(String value) {
+    boolean isValidAttribute(String value) {
         return value.matches("^[+#\\-]\\s*\\w+\\s*:\\s*\\w+$");
     }
 
     // Validate Method syntax: visibility name(parameters) : returnType
-    private boolean isValidMethod(String value) {
+    boolean isValidMethod(String value) {
         return value.matches("^[+#\\-]\\s*\\w+\\s*\\([^)]*\\)\\s*:\\s*\\w+$");
     }
 
