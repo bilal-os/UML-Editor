@@ -115,4 +115,13 @@ public class Association extends RelationComponent {
 
         g.fillPolygon(xPoints, yPoints, 3);
     }
+
+    public Property getPropertyByType(String type) {
+        for (Property property : properties) {
+            if (property.getType().equals(type)) {
+                return property;
+            }
+        }
+        return null;
+    }
 }

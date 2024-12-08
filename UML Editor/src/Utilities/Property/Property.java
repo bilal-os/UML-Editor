@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "propertyType")
 @JsonSubTypes({
@@ -141,4 +142,5 @@ public abstract class Property {
     public abstract void validateInput(String type, String value) throws IllegalArgumentException;
 
     public abstract void addValue(String value) throws IllegalArgumentException;
+
 }
