@@ -3,55 +3,175 @@ package UILayer;
 import javax.swing.*;
 import java.awt.*;
 
+import UILayer.Canvas.Canvas;
+import UILayer.ComponentPalette.ComponentPalette;
+import UILayer.DiagramsPanel.DiagramsPanel;
+import UILayer.MenuBar.MenuBar;
+import UILayer.PropertiesPanel.PropertiesPanel;
+import Utilities.Project.Project;
+
 public class MainWindow extends JFrame {
-    private MenuBar menuBar;
-    private Canvas canvas;
+    // UI Components
+    private UILayer.MenuBar.MenuBar menuBar;
+    private UILayer.Canvas.Canvas canvas;
     private PropertiesPanel propertiesPanel;
     private ComponentPalette componentPalette;
+    private DiagramsPanel diagramsPanel;
+    private JPanel workspacePanel;
+    private JPanel sidePanel;
 
-    public MainWindow() {
-        // Setting up the main window
-        setTitle("UML Diagram Designer");
-        setSize(1000, 700);  // Larger window for better visual
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setLayout(new BorderLayout(10, 10));  // Improved spacing
+    // Business Logic and Data
 
-        // Initialize components
-        menuBar = new MenuBar();
-        canvas = new Canvas();
-        propertiesPanel = new PropertiesPanel();
-        componentPalette = new ComponentPalette();
+    private final Project project;
 
-        // Set the menu bar
-        setJMenuBar(menuBar);
+    public MainWindow( Project project) {
+        // Initialize business logic and project
+        this.project = project;
 
-        // Add components with improved layout
-        add(canvas, BorderLayout.CENTER);  // Add Canvas
-        add(propertiesPanel, BorderLayout.EAST);  // Add Properties Panel
-        add(componentPalette, BorderLayout.WEST);  // Add Component Palette
+        // Set up the main window
+        initializeFrame();
 
-        // Adding borders for better separation
-        propertiesPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        componentPalette.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Initialize UI components
+        initializePanels();
+        initializeMenuBar();
+
+        // Assemble the UI
+        assembleWorkspace();
+        addStatusBar(project.getName());
+        addCustomCloseOperation();
+    }
+    private void addCustomCloseOperation() {
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE); // Prevent default behavior
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent e) {
+                // Simply dispose of this window
+                dispose();
+            }
+        });
     }
 
+    public UILayer.MenuBar.MenuBar getMenu()
+    {
+        return menuBar;
+    }
+
+    public UILayer.Canvas.Canvas getCanvas()
+    {
+        return canvas;
+    }
+
+    public PropertiesPanel getPropertiesPanel()
+    {
+        return propertiesPanel;
+    }
+
+    public ComponentPalette getComponentPalette()
+    {
+        return componentPalette;
+    }
+
+    public DiagramsPanel getDiagramsPanel()
+    {
+        return diagramsPanel;
+    }
+
+    public Project getProject()
+    {
+        return project;
+    }
+
+    /**
+     * Initializes the main window frame.
+     */
+    private void initializeFrame() {
+        setTitle("UML Diagram Designer");
+        setSize(1200, 800);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout(15, 15)); // Layout with spacing
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+    }
+
+    /**
+     * Initializes the menu bar.
+     */
+    private void initializeMenuBar() {
+        menuBar = new MenuBar();
+        setJMenuBar(menuBar);
+    }
+
+    /**
+     * Initializes all panels and UI components.
+     */
+    private void initializePanels() {
+        // Initialize core components
+        propertiesPanel = new PropertiesPanel();
+        componentPalette = new ComponentPalette();
+        diagramsPanel = new DiagramsPanel(project);
+        canvas = new Canvas();
+
+
+        // Set up side panel
+        sidePanel = new JPanel();
+        sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
+        sidePanel.setPreferredSize(new Dimension(250, 600));
+        sidePanel.add(diagramsPanel);
+        sidePanel.add(Box.createVerticalStrut(10)); // Vertical spacing
+        sidePanel.add(componentPalette);
+
+        // Configure canvas
+        canvas.setPreferredSize(new Dimension(700, 600));
+        canvas.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1),
+                BorderFactory.createEmptyBorder(5, 5, 5, 5)
+        ));
+
+        // Create workspace panel
+        workspacePanel = new JPanel(new BorderLayout(10, 10));
+        workspacePanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    }
+
+    /**
+     * Assembles the workspace by adding panels to the main frame.
+     */
+    private void assembleWorkspace() {
+        workspacePanel.add(canvas, BorderLayout.CENTER);
+        workspacePanel.add(propertiesPanel, BorderLayout.EAST);
+        workspacePanel.add(sidePanel, BorderLayout.WEST);
+
+        add(workspacePanel, BorderLayout.CENTER);
+    }
+
+    /**
+     * Adds a status bar to the main window.
+     */
+    private void addStatusBar(String text) {
+        JLabel statusBar = new JLabel(text, SwingConstants.LEFT);
+        statusBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        add(statusBar, BorderLayout.SOUTH);
+    }
+
+    /**
+     * Displays the main window.
+     */
     public void display() {
+        pack();
         setVisible(true);
     }
 
+    /**
+     * Refreshes the UI components.
+     */
     public void refresh() {
-        // Refresh logic
+        SwingUtilities.updateComponentTreeUI(this);
     }
 
-    public void close() {
+    /**
+     * Closes the main window.
+     */
+    public void close   () {
         dispose();
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            MainWindow window = new MainWindow();
-            window.display();
-        });
-    }
 }
