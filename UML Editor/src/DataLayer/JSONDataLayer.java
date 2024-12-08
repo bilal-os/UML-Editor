@@ -59,7 +59,7 @@ public class JSONDataLayer implements DataLayer {
             // Deserialize the JSON content into a Project object
             return objectMapper.readValue(file, Project.class);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             throw new Exception("Error reading or deserializing the project file", e);
         }
     }

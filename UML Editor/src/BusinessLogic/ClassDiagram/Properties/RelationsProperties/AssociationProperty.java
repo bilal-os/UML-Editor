@@ -68,6 +68,10 @@ public class AssociationProperty extends Property {
 
 
     private Component findComponentByName(String componentName) {
+        if (associatedComponent == null || associatedComponent.getDiagram() == null) {
+            throw new IllegalStateException("Associated component or diagram is null");
+        }
+
         return associatedComponent.getDiagram().getComponents().stream()
                 .filter(component -> Objects.equals(component.getName(), componentName))
                 .findFirst()
